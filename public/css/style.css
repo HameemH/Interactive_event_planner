@@ -1,0 +1,32 @@
+.glass-card {
+      /* make it a bit more solid */
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow:
+        /* outer glow to pick up page colors */
+        0 0 20px rgba(211, 216, 255, 0.6),
+        /* preserve that inset 3D shape */
+        inset 6px 6px 12px rgba(194, 197, 214, 0.6),
+        inset -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      /* bring back the lift/inset contrast */
+      box-shadow:
+        inset 4px 4px 8px rgba(194, 197, 214, 0.6),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8),
+        2px 2px 4px rgba(0,0,0,0.05);
+    }
+
+    input, select, button {
+      color: #2d3748; /* dark text for legibility */
+    }
+    ::placeholder {
+      color: rgba(45,55,72,0.6);
+    }

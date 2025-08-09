@@ -14,6 +14,19 @@ Route::get('/db', function () {
 });
 
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/home', function () {
+    return view('BasePages.publicHome');
 });
+Route::get('/seminar', function () {
+    return view('BasePages.seminar');
+});
+Route::get('/wedding', function () {
+    return view('BasePages.wedding');
+});
+Route::get('/religious', function () {
+    return view('BasePages.religious');
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
