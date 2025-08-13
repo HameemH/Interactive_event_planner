@@ -44,12 +44,6 @@
                class="bg-transparent w-full outline-none text-base" required />
       </div>
 
-      <!-- Remember Me -->
-      <div class="mb-4 flex items-center justify-start">
-        <input type="checkbox" name="remember" id="remember" class="mr-2">
-        <label for="remember" class="text-sm text-gray-600">Remember me</label>
-      </div>
-
       <!-- Role Selector -->
       <div class="mb-6 px-4 py-3 rounded-full glass-input flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600 mr-2" viewBox="0 0 24 24"
