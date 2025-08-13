@@ -14,7 +14,7 @@ Route::get('/db', function () {
 });
 
 
-Route::get('/home', function () {
+Route::get('/', function () {
     return view('BasePages.publicHome');
 });
 Route::get('/seminar', function () {
