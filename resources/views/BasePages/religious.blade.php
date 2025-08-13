@@ -8,9 +8,18 @@
     body {
       background: linear-gradient(145deg, #d3d8ff, #eef1ff);
     }
-    .neumorphic {
-      background: #e8ebff;
-      box-shadow: 8px 8px 16px #c2c5d6, -8px -8px 16px #ffffff;
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+    }
+    .glass-card:hover {
+      transform: scale(1.02);
     }
     .modal {
       backdrop-filter: blur(6px);
@@ -23,10 +32,10 @@
   <h1 class="text-4xl font-extrabold text-center mb-12">Religious Event Packages</h1>
 
   <!-- Package List -->
-  <div class="neumorphic p-6 rounded-[30px] space-y-6">
+  <div class="glass-card p-6 rounded-[30px] space-y-6">
 
     <!-- Basic Prayer -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('basic')">
+    <div class="flex justify-between items-center p-4 glass-card rounded-[20px] hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('basic')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/bb.jpg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -35,11 +44,11 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">60,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Book Now</button>
+      <button class="px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-700">Book Now</button>
     </div>
 
     <!-- Puja -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('spiritual')">
+    <div class="flex justify-between items-center p-4 glass-card rounded-[20px] hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('spiritual')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/cc.jpg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -48,12 +57,11 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">1,89,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Book Now</button>
+      <button class="px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-700">Book Now</button>
     </div>
 
-
     <!-- Grand Milad -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('grand')">
+    <div class="flex justify-between items-center p-4 glass-card rounded-[20px] hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('grand')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/dd.jpg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -62,11 +70,11 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">1,99,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Book Now</button>
+      <button class="px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-700">Book Now</button>
     </div>
 
     <!-- Custom Religious Event -->
-    <div class="flex justify-between items-center p-6 bg-gradient-to-r from-indigo-100 to-blue-200 rounded-[20px] shadow-xl border border-indigo-300 hover:scale-[1.01] transition">
+    <div class="flex justify-between items-center p-6 glass-card rounded-[20px] hover:scale-[1.01] transition border border-indigo-300">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/Religious.png')}}" class="w-72 h-44 object-cover rounded-xl border border-indigo-400" />
         <div>
