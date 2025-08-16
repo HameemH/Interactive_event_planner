@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -29,29 +29,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 hidden group-hover:block" id="dropdown-menu">
-                            <a href="{{ route('logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                @csrf
-                            </form>
-                        </div>
                     </div>
-                    <script>
-                        // Simple dropdown toggle
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const btn = document.getElementById('user-menu');
-                            const menu = document.getElementById('dropdown-menu');
-                            btn.addEventListener('click', function(e) {
-                                e.stopPropagation();
-                                menu.classList.toggle('hidden');
-                            });
-                            document.addEventListener('click', function() {
-                                menu.classList.add('hidden');
-                            });
-                        });
-                    </script>
                 @endguest
             </div>
         </nav>
