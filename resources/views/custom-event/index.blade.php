@@ -1,12 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="glass-card p-8 pt-6 rounded-3xl w-[360px] text-center">
-        <h1 class="text-xl font-extrabold text-gray-800">Customize Your Event</h1>
-        <p class="text-xs text-gray-600">Please select your event details below</p>
+    <div class="flex items-center justify-center min-h-[calc(100vh-64px)]">
+        <!-- min-h subtracts nav height (adjust 64px if your nav height differs) -->
+        <div class="glass-card p-10 rounded-3xl w-[420px] text-center shadow-lg">
+            <h1 class="text-2xl font-extrabold text-gray-800 mb-2">Customize Your Event</h1>
+            <p class="text-sm text-gray-600 mb-6">Please select your event details below</p>
 
-        <a href="{{ route('custom-event.venue') }}" class="w-full py-2 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform">
-            Start Customizing
-        </a>
+            <a href="{{ route('custom-event.venue') }}" class="w-full py-3 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform">
+                Start Customizing
+            </a>
+        </div>
     </div>
 @endsection
