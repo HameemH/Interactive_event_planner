@@ -1,30 +1,158 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="glass-card p-8 pt-6 rounded-3xl w-[360px] text-center">
-        <h1 class="text-xl font-extrabold text-gray-800">Select Stage & Decoration</h1>
-
-        <form method="POST" action="{{ route('custom-event.catering') }}">
-            @csrf
-            <!-- Stage selection -->
-            <div class="mb-4">
-                <label for="stage_type" class="block text-left mb-2">Choose Stage Type</label>
-                <select name="stage_type" class="w-full bg-transparent outline-none text-base">
-                    <option value="basic">Basic</option>
-                    <option value="premium">Premium</option>
-                    <option value="luxury">Luxury</option>
-                </select>
+    <div class="flex items-center justify-center min-h-[calc(100vh-64px)] relative">
+        <!-- Card Container with Estimated Cost Counter -->
+        <div class="glass-card p-10 pt-8 rounded-3xl w-[600px] min-h-[500px] flex flex-col justify-between shadow-lg">
+            <!-- Estimated Cost Counter in Top Right -->
+            <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
+                <span id="estimated-cost">Estimated Cost: $0</span>
             </div>
 
-            <!-- Decoration options -->
-            <div class="mb-4">
-                <label for="surrounding_decoration" class="block text-left mb-2">Add Surrounding Decoration</label>
-                <input type="checkbox" name="surrounding_decoration" class="form-checkbox">
-            </div>
+            <!-- Go Back Button (Top Left) -->
+            <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
+                &#8592; Go Back
+            </a>
 
-            <button type="submit" class="w-full py-2 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform">
-                Next: Select Catering
-            </button>
-        </form>
+            <!-- Title of the Card -->
+            <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Stage & Decoration</h1>
+
+            <form method="POST" action="{{ route('custom-event.catering') }}">
+                @csrf
+
+                <!-- Stage Selection -->
+                <div class="mb-4">
+                    <label for="stage_type" class="block text-left mb-2">Choose Stage Type</label>
+                    <select name="stage_type" id="stage_type" class="w-full bg-transparent outline-none text-base">
+                        <option value="basic">Basic</option>
+                        <option value="premium">Premium</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+                </div>
+
+                <!-- Stage Image Selection (Popup Slider) -->
+                <div id="stage-image-section" class="mb-4">
+                    <label for="stage_image" class="block text-left mb-2">Choose Stage Image</label>
+                    <input type="text" name="stage_image" id="stage_image" readonly class="w-full bg-transparent outline-none text-base" placeholder="Select a stage image">
+                    <button type="button" id="open-slider" class="w-full py-2 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform">
+                        Open Image Slider
+                    </button>
+                </div>
+
+                <!-- Surrounding Decoration Option -->
+                <div class="mb-4">
+                    <label for="surrounding_decoration" class="block text-left mb-2">Add Surrounding Decoration</label>
+                    <input type="checkbox" name="surrounding_decoration" id="surrounding_decoration" class="form-checkbox">
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform mt-auto">
+                    Next: Select Catering
+                </button>
+            </form>
+        </div>
     </div>
+
+    <!-- Stage Image Slider Popup -->
+    <div id="stage-image-slider" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg w-[80%] md:w-[60%]">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Select a Stage Image</h3>
+            <div id="stage-images" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Images will be dynamically inserted here -->
+            </div>
+            <button id="close-slider" class="mt-4 py-2 px-4 bg-indigo-600 text-white rounded-lg">Close</button>
+        </div>
+    </div>
+
+    @section('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const stageTypeSelect = document.getElementById('stage_type');
+                const stageImageInput = document.getElementById('stage_image');
+                const openSliderButton = document.getElementById('open-slider');
+                const stageImageSlider = document.getElementById('stage-image-slider');
+                const closeSliderButton = document.getElementById('close-slider');
+                const stageImages = document.getElementById('stage-images');
+                const surroundingDecorationCheckbox = document.getElementById('surrounding_decoration');
+                const estimatedCostElement = document.getElementById('estimated-cost');
+
+                // Function to open the image slider
+                openSliderButton.addEventListener('click', function() {
+                    stageImageSlider.classList.remove('hidden');
+                    loadImagesBasedOnStageType();
+                });
+
+                // Function to close the image slider
+                closeSliderButton.addEventListener('click', function() {
+                    stageImageSlider.classList.add('hidden');
+                });
+
+                // Dynamically load images based on the selected stage type
+                function loadImagesBasedOnStageType() {
+                    const selectedStage = stageTypeSelect.value;
+                    let images = [];
+
+                    // Basic stage images
+                    if (selectedStage === 'basic') {
+                        images = [
+                            'https://via.placeholder.com/150?text=Basic+Stage+1',
+                            'https://via.placeholder.com/150?text=Basic+Stage+2',
+                            'https://via.placeholder.com/150?text=Basic+Stage+3'
+                        ];
+                    }
+                    // Premium stage images
+                    else if (selectedStage === 'premium') {
+                        images = [
+                            'https://via.placeholder.com/150?text=Premium+Stage+1',
+                            'https://via.placeholder.com/150?text=Premium+Stage+2',
+                            'https://via.placeholder.com/150?text=Premium+Stage+3'
+                        ];
+                    }
+                    // Luxury stage images
+                    else if (selectedStage === 'luxury') {
+                        images = [
+                            'https://via.placeholder.com/150?text=Luxury+Stage+1',
+                            'https://via.placeholder.com/150?text=Luxury+Stage+2',
+                            'https://via.placeholder.com/150?text=Luxury+Stage+3',
+                            'https://via.placeholder.com/150?text=Luxury+Stage+4'
+                        ];
+                    }
+
+                    // Clear the images section before adding new ones
+                    stageImages.innerHTML = '';
+
+                    // Create image elements and append to the slider
+                    images.forEach(image => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = image;
+                        imgElement.alt = image;
+                        imgElement.classList.add('cursor-pointer', 'rounded-lg');
+                        imgElement.setAttribute('data-image', image);
+                        stageImages.appendChild(imgElement);
+                    });
+                }
+
+                // When an image is selected from the slider
+                stageImages.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'IMG') {
+                        const selectedImage = e.target.getAttribute('data-image');
+                        stageImageInput.value = selectedImage;
+                        stageImageSlider.classList.add('hidden');
+
+                        // Update estimated cost based on venue size and selected stage type
+                        const venueSize = 200; // Mock venue size (this would come from a session or database)
+                        let decorationCost = 0;
+
+                        if (surroundingDecorationCheckbox.checked) {
+                            decorationCost = venueSize * 0.1; // Example: decoration cost based on venue size
+                        }
+
+                        // Estimated cost includes stage cost (assumed fixed for simplicity)
+                        const stageCost = stageTypeSelect.value === 'premium' ? 50 : (stageTypeSelect.value === 'luxury' ? 100 : 20);
+                        const totalCost = stageCost + decorationCost;
+                        estimatedCostElement.innerText = `Estimated Cost: $${totalCost}`;
+                    }
+                });
+            });
+        </script>
+    @endsection
 @endsection

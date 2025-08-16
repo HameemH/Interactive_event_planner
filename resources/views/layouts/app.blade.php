@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+      @yield('scripts')
 </head>
 <body class="bg-gradient-to-br from-indigo-100 to-blue-50 min-h-screen">
     <div id="app">
