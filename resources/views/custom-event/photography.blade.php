@@ -6,7 +6,7 @@
         <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
             <span id="estimated-cost">Estimated Cost: ৳0</span>
         </div>
-        <a href="{{ route('custom-event.catering') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
+        <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
             &#8592; Go Back
         </a>
         <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Photography</h1>
@@ -64,8 +64,8 @@
                 <label>Estimated Cost</label>
                 <input type="text" id="estimated_cost" readonly value="৳0" class="w-full bg-transparent outline-none text-base">
             </div>
-            <button type="submit" class="w-full py-3 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform mt-auto">
-                Finalize Event
+            <button type="submit" formaction="{{ route('custom-event.xtraoptions') }}" class="w-full py-3 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform mt-auto">
+                Next: Extra Options
             </button>
         </form>
     </div>

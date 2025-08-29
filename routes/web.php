@@ -39,4 +39,5 @@ Route::post('/customize-event/seating', [EventCustomizationController::class, 's
 Route::post('/customize-event/stage', [EventCustomizationController::class, 'stageForm'])->name('custom-event.stage'); // POST for form submission
 Route::post('/customize-event/catering', [EventCustomizationController::class, 'cateringForm'])->name('custom-event.catering'); // POST for form submission
 Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm'])->name('custom-event.photography'); // POST for form submission
-Route::post('/customize-event/store', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');
+Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions');
+Route::post('/customize-event/finalize', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');

@@ -53,6 +53,11 @@ class EventCustomizationController extends Controller
         return view('custom-event.photography');
     }
 
+    public function xtraOptionsForm()
+    {
+        return view('custom-event.xtraoptions');
+    }
+
     public function store(Request $request)
     {
         // Store the final event data into the database
