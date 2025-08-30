@@ -8,6 +8,10 @@
             <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
                 <span id="estimated-cost">Estimated Cost: $0</span>
             </div>
+            <!-- Total Estimated Price Section -->
+            <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
+                <span id="total-estimated-cost">Total Estimated Price: $0</span>
+            </div>
 
             <!-- Title of the Card -->
             <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Your Venue</h1>
@@ -30,7 +34,7 @@
                 </div>
 
                 <!-- Predefined Venue List (hidden by default) -->
-                <div id="predefined-venue-list" class="hidden mb-4">
+                <div id="predefined-venue-list" class="mb-4 hidden">
                     <label for="predefined_venue" class="block text-left mb-2">Select Predefined Venue</label>
                     <select name="predefined_venue" id="predefined_venue" class="w-full bg-transparent outline-none text-base">
                         <option value="" disabled selected>Select a venue</option>
@@ -40,8 +44,10 @@
                     </select>
                 </div>
 
-                <!-- Venue size input if custom venue is selected -->
-                <div id="custom-venue-fields" >
+                <!-- Venue size/address input always shown, but readonly for predefined -->
+                <div id="custom-venue-fields" class="mb-4">
+                    <!-- Max Guests (hidden, used for JS only) -->
+                    <input type="number" id="max_guests" class="hidden">
                     <div class="mb-4">
                         <label for="venue_size" class="block text-left mb-2">Venue Size (sq meters)</label>
                         <input type="number" name="venue_size" id="venue_size" placeholder="Enter venue size" class="w-full bg-transparent outline-none text-base">
@@ -51,6 +57,7 @@
                         <label for="venue_address" class="block text-left mb-2">Venue Address</label>
                         <input type="text" name="venue_address" id="venue_address" placeholder="Enter address" class="w-full bg-transparent outline-none text-base">
                     </div>
+                    
                 </div>
 
                 <!-- "Next" Button -->
@@ -71,31 +78,114 @@
                 const venueSizeInput = document.getElementById('venue_size');
                 const venueAddressInput = document.getElementById('venue_address');
                 const estimatedCostElement = document.getElementById('estimated-cost');
+                const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
+                const maxGuestsInput = document.getElementById('max_guests');
+
+                // Helper: Save venue info to localStorage (include type and predefined name)
+                function saveVenueInfo(type, predefined, size, address, cost) {
+                    const venueData = {
+                        type: type,
+                        predefined: predefined,
+                        size: size,
+                        address: address,
+                        cost: cost
+                    };
+                    localStorage.setItem('event_venue', JSON.stringify(venueData));
+                    updateTotalEstimatedCost();
+                }
+
+                // Helper: Calculate max guests by venue size (assume 2 sq meters per guest)
+                function calculateMaxGuests(size) {
+                    return Math.floor(size / 2);
+                }
+
+                // Helper: Update total estimated cost from all steps
+                function updateTotalEstimatedCost() {
+                    let total = 0;
+                    // Venue
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    if (venue.cost) total += venue.cost;
+                    // Seating
+                    const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+                    if (seating.cost) total += seating.cost;
+                    // Stage
+                    const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+                    if (stage.cost) total += stage.cost;
+                    // Catering
+                    const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+                    if (catering.cost) total += catering.cost;
+                    // Photography
+                    const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+                    if (photography.cost) total += photography.cost;
+                    // Extra Options
+                    const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+                    if (extra.cost) total += extra.cost;
+                    totalEstimatedCostElement.innerText = `Total Estimated Price: $${total}`;
+                }
 
                 // Toggle between predefined and custom venue forms
-                venueTypeSelect.addEventListener('change', function() {
-                    if (this.value === 'predefined') {
+                function updateVenueTypeUI() {
+                    if (venueTypeSelect.value === 'predefined') {
                         predefinedVenueList.classList.remove('hidden');
+                        customVenueFields.classList.remove('hidden');
+                        venueSizeInput.readOnly = true;
+                        venueAddressInput.readOnly = true;
                     } else {
                         predefinedVenueList.classList.add('hidden');
+                        customVenueFields.classList.remove('hidden');
+                        venueSizeInput.readOnly = false;
+                        venueAddressInput.readOnly = false;
+                    }
+                }
+                venueTypeSelect.addEventListener('change', function() {
+                    updateVenueTypeUI();
+                    if (venueTypeSelect.value === 'predefined') {
+                        // If a predefined venue is already selected, trigger its change event
+                        if (predefinedVenueSelect.value && predefinedVenueSelect.value !== "") {
+                            predefinedVenueSelect.dispatchEvent(new Event('change'));
+                        } else {
+                            // No venue selected, clear fields and localStorage
+                            venueSizeInput.value = "";
+                            venueAddressInput.value = "";
+                            maxGuestsInput.value = "";
+                            estimatedCostElement.innerText = `Estimated Cost: $0`;
+                            saveVenueInfo('predefined', '', 0, '', 0);
+                        }
+                    } else if (venueTypeSelect.value === 'custom') {
+                        const size = parseInt(venueSizeInput.value) || 0;
+                        updateEstimatedCost(size);
                     }
                 });
 
                 // Autofill custom fields based on selected predefined venue
                 predefinedVenueSelect.addEventListener('change', function() {
                     const selectedVenue = this.value;
+                    let size = 0;
+                    let address = '';
                     if (selectedVenue === 'Venue A') {
-                        venueSizeInput.value = 100;
-                        venueAddressInput.value = '123 Venue A Address';
-                        updateEstimatedCost(100);
+                        size = 100;
+                        address = '123 Venue A Address';
                     } else if (selectedVenue === 'Venue B') {
-                        venueSizeInput.value = 200;
-                        venueAddressInput.value = '456 Venue B Address';
-                        updateEstimatedCost(200);
+                        size = 200;
+                        address = '456 Venue B Address';
                     } else if (selectedVenue === 'Venue C') {
-                        venueSizeInput.value = 300;
-                        venueAddressInput.value = '789 Venue C Address';
-                        updateEstimatedCost(300);
+                        size = 300;
+                        address = '789 Venue C Address';
+                    }
+                    venueSizeInput.value = size;
+                    venueAddressInput.value = address;
+                        if (maxGuestsInput) maxGuestsInput.value = calculateMaxGuests(size);
+                    // Always update price and save info to localStorage
+                    estimatedCostElement.innerText = `Estimated Cost: $${size * 10}`;
+                    saveVenueInfo('predefined', selectedVenue, size, address, size * 10);
+                });
+
+                // Update max guests and cost on venue size change (only if custom)
+                venueSizeInput.addEventListener('input', function() {
+                    if (venueTypeSelect.value === 'custom') {
+                        const size = parseInt(venueSizeInput.value) || 0;
+                        maxGuestsInput.value = calculateMaxGuests(size);
+                        updateEstimatedCost(size);
                     }
                 });
 
@@ -104,7 +194,32 @@
                     const costPerSquareMeter = 10; // Example cost
                     const estimatedCost = size * costPerSquareMeter;
                     estimatedCostElement.innerText = `Estimated Cost: $${estimatedCost}`;
+                    // Save venue info for custom or predefined
+                    if (venueTypeSelect.value === 'predefined') {
+                        saveVenueInfo('predefined', predefinedVenueSelect.value, size, venueAddressInput.value, estimatedCost);
+                    } else {
+                        saveVenueInfo('custom', '', size, venueAddressInput.value, estimatedCost);
+                    }
                 }
+
+                // On page load, restore venue info and total price
+                (function restoreVenueInfo() {
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    if (venue.type === 'predefined') {
+                        venueTypeSelect.value = 'predefined';
+                        updateVenueTypeUI();
+                        if (venue.predefined) predefinedVenueSelect.value = venue.predefined;
+                        predefinedVenueSelect.dispatchEvent(new Event('change'));
+                    } else {
+                        venueTypeSelect.value = 'custom';
+                        updateVenueTypeUI();
+                        if (venue.size) venueSizeInput.value = venue.size;
+                        if (venue.address) venueAddressInput.value = venue.address;
+                        if (venue.size) maxGuestsInput.value = calculateMaxGuests(venue.size);
+                        if (venue.cost) estimatedCostElement.innerText = `Estimated Cost: $${venue.cost}`;
+                    }
+                    updateTotalEstimatedCost();
+                })();
             });
         </script>
     @endsection

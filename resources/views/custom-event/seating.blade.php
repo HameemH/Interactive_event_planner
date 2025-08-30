@@ -8,6 +8,10 @@
             <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
                 <span id="estimated-cost">Estimated Cost: $0</span>
             </div>
+            <!-- Total Estimated Price Section -->
+            <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
+                <span id="total-estimated-cost">Total Estimated Price: $0</span>
+            </div>
 
             <!-- Back Button (Top Left) -->
             <a href="{{ route('custom-event.venue') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
@@ -24,6 +28,7 @@
                 <div class="mb-4">
                     <label for="attendees" class="block text-left mb-2">Number of Attendees</label>
                     <input type="number" name="attendees" id="attendees" placeholder="Enter number of people" class="w-full bg-transparent outline-none text-base">
+                    <span id="max-attendees-info" class="text-xs text-gray-500"></span>
                 </div>
 
                 <!-- Chair Type Selection -->
@@ -69,6 +74,54 @@
                 const tableTypeSelect = document.getElementById('table_type');
                 const seatCoverSelect = document.getElementById('seat_cover');
                 const estimatedCostElement = document.getElementById('estimated-cost');
+                const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
+                const maxAttendeesInfo = document.getElementById('max-attendees-info');
+
+                // Helper: Save seating info to localStorage
+                function saveSeatingInfo(attendees, chairType, tableType, seatCover, cost) {
+                    const seatingData = {
+                        attendees: attendees,
+                        chairType: chairType,
+                        tableType: tableType,
+                        seatCover: seatCover,
+                        cost: cost
+                    };
+                    localStorage.setItem('event_seating', JSON.stringify(seatingData));
+                    updateTotalEstimatedCost();
+                }
+
+                // Helper: Update total estimated cost from all steps
+                function updateTotalEstimatedCost() {
+                    let total = 0;
+                    // Venue
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    if (venue.cost) total += venue.cost;
+                    // Seating
+                    const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+                    if (seating.cost) total += seating.cost;
+                    // Stage
+                    const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+                    if (stage.cost) total += stage.cost;
+                    // Catering
+                    const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+                    if (catering.cost) total += catering.cost;
+                    // Photography
+                    const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+                    if (photography.cost) total += photography.cost;
+                    // Extra Options
+                    const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+                    if (extra.cost) total += extra.cost;
+                    totalEstimatedCostElement.innerText = `Total Estimated Price: $${total}`;
+                }
+
+                // Helper: Get max attendees from venue size
+                function getMaxAttendees() {
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    if (venue.size) {
+                        return Math.floor(venue.size / 2);
+                    }
+                    return null;
+                }
 
                 // Add event listeners to inputs to calculate estimated cost dynamically
                 attendeesInput.addEventListener('input', calculateCost);
@@ -77,7 +130,17 @@
                 seatCoverSelect.addEventListener('change', calculateCost);
 
                 function calculateCost() {
-                    const attendees = parseInt(attendeesInput.value) || 0;
+                    let attendees = parseInt(attendeesInput.value) || 0;
+                    const maxAttendees = getMaxAttendees();
+                    if (maxAttendees !== null) {
+                        maxAttendeesInfo.innerText = `Maximum allowed by venue: ${maxAttendees}`;
+                        if (attendees > maxAttendees) {
+                            attendeesInput.value = maxAttendees;
+                            attendees = maxAttendees;
+                        }
+                    } else {
+                        maxAttendeesInfo.innerText = '';
+                    }
                     const chairType = chairTypeSelect.value;
                     const tableType = tableTypeSelect.value;
                     const seatCover = seatCoverSelect.value;
@@ -90,7 +153,19 @@
                     // Total cost calculation
                     const totalCost = attendees * (chairCost + tableCost + seatCoverCost);
                     estimatedCostElement.innerText = `Estimated Cost: $${totalCost}`;
+                    saveSeatingInfo(attendees, chairType, tableType, seatCover, totalCost);
                 }
+
+                // On page load, restore seating info and total price
+                (function restoreSeatingInfo() {
+                    const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+                    if (seating.attendees) attendeesInput.value = seating.attendees;
+                    if (seating.chairType) chairTypeSelect.value = seating.chairType;
+                    if (seating.tableType) tableTypeSelect.value = seating.tableType;
+                    if (seating.seatCover) seatCoverSelect.value = seating.seatCover;
+                    calculateCost();
+                    updateTotalEstimatedCost();
+                })();
             });
         </script>
     @endsection

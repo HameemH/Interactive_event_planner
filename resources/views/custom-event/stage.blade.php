@@ -8,9 +8,13 @@
             <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
                 <span id="estimated-cost">Estimated Cost: $0</span>
             </div>
+            <!-- Total Estimated Price Section -->
+            <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
+                <span id="total-estimated-cost">Total Estimated Price: $0</span>
+            </div>
 
             <!-- Go Back Button (Top Left) -->
-            <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
+            <a href="{{ route('custom-event.seating') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
                 &#8592; Go Back
             </a>
 
@@ -74,6 +78,49 @@
                 const stageImages = document.getElementById('stage-images');
                 const surroundingDecorationCheckbox = document.getElementById('surrounding_decoration');
                 const estimatedCostElement = document.getElementById('estimated-cost');
+                const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
+
+                // Helper: Save stage info to localStorage
+                function saveStageInfo(type, image, decoration, cost) {
+                    const stageData = {
+                        type: type,
+                        image: image,
+                        decoration: decoration,
+                        cost: cost
+                    };
+                    localStorage.setItem('event_stage', JSON.stringify(stageData));
+                    updateTotalEstimatedCost();
+                }
+
+                // Helper: Update total estimated cost from all steps
+                function updateTotalEstimatedCost() {
+                    let total = 0;
+                    // Venue
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    if (venue.cost) total += venue.cost;
+                    // Seating
+                    const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+                    if (seating.cost) total += seating.cost;
+                    // Stage
+                    const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+                    if (stage.cost) total += stage.cost;
+                    // Catering
+                    const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+                    if (catering.cost) total += catering.cost;
+                    // Photography
+                    const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+                    if (photography.cost) total += photography.cost;
+                    // Extra Options
+                    const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+                    if (extra.cost) total += extra.cost;
+                    totalEstimatedCostElement.innerText = `Total Estimated Price: $${total}`;
+                }
+
+                // Helper: Get venue size from localStorage
+                function getVenueSize() {
+                    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    return venue.size || 0;
+                }
 
                 // Function to open the image slider
                 openSliderButton.addEventListener('click', function() {
@@ -90,7 +137,7 @@
                 function loadImagesBasedOnStageType() {
                     const selectedStage = stageTypeSelect.value;
                     let images = [];
-
+                    // ...existing code...
                     // Basic stage images
                     if (selectedStage === 'basic') {
                         images = [
@@ -116,11 +163,8 @@
                             'https://via.placeholder.com/150?text=Luxury+Stage+4'
                         ];
                     }
-
-                    // Clear the images section before adding new ones
+                    // ...existing code...
                     stageImages.innerHTML = '';
-
-                    // Create image elements and append to the slider
                     images.forEach(image => {
                         const imgElement = document.createElement('img');
                         imgElement.src = image;
@@ -131,27 +175,43 @@
                     });
                 }
 
+                // Calculate and update cost
+                function updateStageCost() {
+                    const venueSize = getVenueSize();
+                    let decorationCost = 0;
+                    if (surroundingDecorationCheckbox.checked) {
+                        decorationCost = venueSize * 10;
+                    }
+                    const stageCost = stageTypeSelect.value === 'premium' ? 50 : (stageTypeSelect.value === 'luxury' ? 100 : 20);
+                    const totalCost = stageCost + decorationCost;
+                    estimatedCostElement.innerText = `Estimated Cost: $${totalCost}`;
+                    saveStageInfo(stageTypeSelect.value, stageImageInput.value, surroundingDecorationCheckbox.checked, totalCost);
+                }
+
                 // When an image is selected from the slider
                 stageImages.addEventListener('click', function(e) {
                     if (e.target.tagName === 'IMG') {
                         const selectedImage = e.target.getAttribute('data-image');
                         stageImageInput.value = selectedImage;
                         stageImageSlider.classList.add('hidden');
-
-                        // Update estimated cost based on venue size and selected stage type
-                        const venueSize = 200; // Mock venue size (this would come from a session or database)
-                        let decorationCost = 0;
-
-                        if (surroundingDecorationCheckbox.checked) {
-                            decorationCost = venueSize * 0.1; // Example: decoration cost based on venue size
-                        }
-
-                        // Estimated cost includes stage cost (assumed fixed for simplicity)
-                        const stageCost = stageTypeSelect.value === 'premium' ? 50 : (stageTypeSelect.value === 'luxury' ? 100 : 20);
-                        const totalCost = stageCost + decorationCost;
-                        estimatedCostElement.innerText = `Estimated Cost: $${totalCost}`;
+                        updateStageCost();
                     }
                 });
+
+                // Update cost when surrounding decoration is toggled
+                surroundingDecorationCheckbox.addEventListener('change', updateStageCost);
+                // Also update when stage type changes
+                stageTypeSelect.addEventListener('change', updateStageCost);
+
+                // On page load, restore stage info and total price
+                (function restoreStageInfo() {
+                    const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+                    if (stage.type) stageTypeSelect.value = stage.type;
+                    if (stage.image) stageImageInput.value = stage.image;
+                    if (stage.decoration) surroundingDecorationCheckbox.checked = stage.decoration;
+                    if (stage.cost) estimatedCostElement.innerText = `Estimated Cost: $${stage.cost}`;
+                    updateTotalEstimatedCost();
+                })();
             });
         </script>
     @endsection

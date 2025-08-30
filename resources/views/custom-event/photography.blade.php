@@ -6,7 +6,11 @@
         <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
             <span id="estimated-cost">Estimated Cost: ৳0</span>
         </div>
-        <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
+        <!-- Total Estimated Price Section -->
+        <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
+            <span id="total-estimated-cost">Total Estimated Price: ৳0</span>
+        </div>
+        <a href="{{ route('custom-event.catering') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
             &#8592; Go Back
         </a>
         <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Photography</h1>
@@ -88,6 +92,47 @@ document.addEventListener('DOMContentLoaded', function() {
     const indoor = document.getElementById('indoor');
     const estimatedCost = document.getElementById('estimated_cost');
     const estimatedCostElement = document.getElementById('estimated-cost');
+    const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
+
+    // Helper: Save photography info to localStorage
+    function savePhotographyInfo(needed, type, pkg, numP, numH, outdoorVal, cinemaVal, cost) {
+        const photographyData = {
+            needed: needed,
+            type: type,
+            package: pkg,
+            numPhotographers: numP,
+            numHours: numH,
+            outdoor: outdoorVal,
+            cinematography: cinemaVal,
+            cost: cost
+        };
+        localStorage.setItem('event_photography', JSON.stringify(photographyData));
+        updateTotalEstimatedCost();
+    }
+
+    // Helper: Update total estimated cost from all steps
+    function updateTotalEstimatedCost() {
+        let total = 0;
+        // Venue
+        const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+        if (venue.cost) total += venue.cost;
+        // Seating
+        const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+        if (seating.cost) total += seating.cost;
+        // Stage
+        const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+        if (stage.cost) total += stage.cost;
+        // Catering
+        const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+        if (catering.cost) total += catering.cost;
+        // Photography
+        const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+        if (photography.cost) total += photography.cost;
+        // Extra Options
+        const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+        if (extra.cost) total += extra.cost;
+        totalEstimatedCostElement.innerText = `Total Estimated Price: ৳${total}`;
+    }
 
     const packages = {
         standard: {
@@ -133,6 +178,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateEstimatedCost() {
         let cost = 0;
+        let pkg = packageSelect.value;
+        let numP = parseInt(numPhotographers.value) || 1;
+        let numH = parseInt(numHours.value) || 1;
+        let outdoorVal = outdoor.checked;
+        let cinemaVal = cinematography.checked;
         if (photographerNeeded.checked) {
             if (photoType.value === 'package') {
                 const selected = packageSelect.value;
@@ -142,18 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (photoType.value === 'custom') {
                 const photographerRate = 2000; // per hour per photographer
                 const cinematographyRate = 3000; // per hour
-                let numP = parseInt(numPhotographers.value) || 1;
-                let numH = parseInt(numHours.value) || 1;
                 let photoCost = photographerRate * numP * numH; // photography always checked
-                let cinemaCost = cinematography.checked ? cinematographyRate * numH : 0;
+                let cinemaCost = cinemaVal ? cinematographyRate * numH : 0;
                 cost = photoCost + cinemaCost;
-                if (outdoor.checked) {
+                if (outdoorVal) {
                     cost += 2000;
                 }
             }
         }
         estimatedCost.value = `৳${cost}`;
         estimatedCostElement.innerText = `Estimated Cost: ৳${cost}`;
+        savePhotographyInfo(photographerNeeded.checked, photoType.value, pkg, numP, numH, outdoorVal, cinemaVal, cost);
     }
 
     photographerNeeded.addEventListener('change', function() {
@@ -164,6 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
             photographyOptions.style.display = 'none';
             estimatedCost.value = '৳0';
             estimatedCostElement.innerText = 'Estimated Cost: ৳0';
+            savePhotographyInfo(false, '', '', 1, 1, false, false, 0);
         }
     });
     photoType.addEventListener('change', updateSections);
@@ -174,9 +224,25 @@ document.addEventListener('DOMContentLoaded', function() {
     [numPhotographers, numHours, cinematography, outdoor].forEach(el => {
         el.addEventListener('change', updateEstimatedCost);
     });
-    // Initial state
-    photographyOptions.style.display = 'none';
-    updateSections();
+    // On page load, restore photography info and total price
+    (function restorePhotographyInfo() {
+        const photographyData = JSON.parse(localStorage.getItem('event_photography') || '{}');
+        if (photographyData.needed) {
+            photographerNeeded.checked = true;
+            photographyOptions.style.display = '';
+        } else {
+            photographerNeeded.checked = false;
+            photographyOptions.style.display = 'none';
+        }
+        if (photographyData.type) photoType.value = photographyData.type;
+        if (photographyData.package) packageSelect.value = photographyData.package;
+        if (photographyData.numPhotographers) numPhotographers.value = photographyData.numPhotographers;
+        if (photographyData.numHours) numHours.value = photographyData.numHours;
+        if (photographyData.outdoor) outdoor.checked = photographyData.outdoor;
+        if (photographyData.cinematography) cinematography.checked = photographyData.cinematography;
+        updateSections();
+        updateTotalEstimatedCost();
+    })();
 });
 </script>
 @endsection

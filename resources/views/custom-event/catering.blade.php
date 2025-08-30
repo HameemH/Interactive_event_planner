@@ -1,12 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex items-center justify-center min-h-[calc(100vh-64px)] relative">
-    <div class="glass-card p-10 pt-8 rounded-3xl w-[600px] min-h-[500px] flex flex-col justify-between shadow-lg">
+<div class="flex items-center justify-center min-h-[calc(100vh-64px)] relative mt-16">
+    <div class="glass-card p-10 pt-8 rounded-3xl w-[600px] min-h-[500px] max-h-[80vh] overflow-y-auto flex flex-col justify-between shadow-lg">
         <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
             <span id="estimated-cost">Estimated Cost: $0</span>
         </div>
-        <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
+        <!-- Total Estimated Price Section -->
+        <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
+            <span id="total-estimated-cost">Total Estimated Price: $0</span>
+        </div>
+        <a href="{{ route('custom-event.stage') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
             &#8592; Go Back
         </a>
         <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Catering</h1>
@@ -78,7 +82,58 @@ document.addEventListener('DOMContentLoaded', function() {
     const dishCheckboxes = document.querySelectorAll('.dish-checkbox');
     const foodCostInput = document.getElementById('food_cost');
     const estimatedCostElement = document.getElementById('estimated-cost');
-    const attendees = 100;
+    const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
+
+    // Get attendee count from seating info
+    function getAttendees() {
+        const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+        return seating.attendees || 100;
+    }
+
+    // Helper: Save event_catering info to localStorage (matches migration)
+    function saveEventCateringInfo(required, perPersonCost, totalGuests, totalCost) {
+        const cateringData = {
+            catering_required: required,
+            per_person_cost: perPersonCost,
+            total_guests: totalGuests,
+            total_catering_cost: totalCost
+        };
+        localStorage.setItem('event_catering', JSON.stringify(cateringData));
+        updateTotalEstimatedCost();
+    }
+
+    // Helper: Save catering_selections info to localStorage (matches migration)
+    function saveCateringSelectionsInfo(setMenu, extraItems) {
+        const selectionsData = {
+            set_menu: setMenu,
+            extra_items: extraItems
+        };
+        localStorage.setItem('catering_selections', JSON.stringify(selectionsData));
+    }
+
+    // Helper: Update total estimated cost from all steps
+    function updateTotalEstimatedCost() {
+        let total = 0;
+        // Venue
+        const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+        if (venue.cost) total += venue.cost;
+        // Seating
+        const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+        if (seating.cost) total += seating.cost;
+        // Stage
+        const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+        if (stage.cost) total += stage.cost;
+        // Catering
+        const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+        if (catering.cost) total += catering.cost;
+        // Photography
+        const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+        if (photography.cost) total += photography.cost;
+        // Extra Options
+        const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+        if (extra.cost) total += extra.cost;
+        totalEstimatedCostElement.innerText = `Total Estimated Price: ৳${total}`;
+    }
 
     // Set menu items
     const setMenus = {
@@ -124,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateFoodCost() {
         let setMenuPrice = 0;
         let extraDishesPrice = 0;
+        let selectedDishes = [];
 
         // Get set menu price
         if (setMenuSelect.value) {
@@ -134,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dishCheckboxes.forEach(function(checkbox) {
             if (checkbox.checked) {
                 extraDishesPrice += parseFloat(checkbox.getAttribute('data-price')) || 0;
+                selectedDishes.push(checkbox.value);
             }
         });
 
@@ -142,7 +199,14 @@ document.addEventListener('DOMContentLoaded', function() {
         foodCostInput.value = totalPerPerson;
 
         // Total for all attendees
-        estimatedCostElement.innerText = `Estimated Cost: ৳${totalPerPerson * attendees}`;
+        const attendees = getAttendees();
+        const totalCost = totalPerPerson * attendees;
+        estimatedCostElement.innerText = `Estimated Cost: ৳${totalCost}`;
+
+        // Save event_catering info
+        saveEventCateringInfo(cateringRequiredCheckbox.checked, totalPerPerson, attendees, totalCost);
+        // Save catering_selections info
+        saveCateringSelectionsInfo(setMenuSelect.value, selectedDishes);
     }
 
     // Show/hide sections based on catering checkbox
@@ -159,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setMenuItemsDiv.innerHTML = '';
             foodCostInput.value = 0;
             estimatedCostElement.innerText = `Estimated Cost: ৳0`;
+            saveCateringInfo(false, '', [], 0);
         }
     });
 
@@ -172,6 +237,31 @@ document.addEventListener('DOMContentLoaded', function() {
     dishCheckboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', calculateFoodCost);
     });
+
+    // On page load, restore catering info and total price
+    (function restoreCateringInfo() {
+        // Restore event_catering info
+        const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+        if (catering.catering_required) {
+            cateringRequiredCheckbox.checked = true;
+            setMenuSection.style.display = '';
+            extraDishesSection.style.display = '';
+        } else {
+            cateringRequiredCheckbox.checked = false;
+            setMenuSection.style.display = 'none';
+            extraDishesSection.style.display = 'none';
+        }
+        // Restore catering_selections info
+        const selections = JSON.parse(localStorage.getItem('catering_selections') || '{}');
+        if (selections.set_menu) setMenuSelect.value = selections.set_menu;
+        if (selections.extra_items && Array.isArray(selections.extra_items)) {
+            dishCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = selections.extra_items.includes(checkbox.value);
+            });
+        }
+        calculateFoodCost();
+        updateTotalEstimatedCost();
+    })();
 });
 </script>
 @endsection

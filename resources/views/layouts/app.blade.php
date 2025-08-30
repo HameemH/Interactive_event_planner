@@ -12,7 +12,7 @@
 </head>
 <body class="bg-gradient-to-br from-indigo-100 to-blue-50 min-h-screen">
     <div id="app">
-        <nav class="bg-white/80 shadow flex items-center justify-between px-6 py-3">
+    <nav class="bg-white/80 shadow flex items-center justify-between px-6 py-3 fixed top-0 left-0 w-full z-50">
             <a href="{{ url('/') }}" class="text-xl font-extrabold text-indigo-700 tracking-tight">{{ config('app.name', 'Laravel') }}</a>
             <div>
                 @guest
@@ -34,7 +34,7 @@
                 @endguest
             </div>
         </nav>
-        <main class="py-8">
+    <main class="pt-20 pb-8">
             @yield('content')
         </main>
     </div>

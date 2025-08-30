@@ -35,9 +35,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/customize-event', [EventCustomizationController::class, 'index'])->name('custom-event.index');
 Route::get('/customize-event/venue', [EventCustomizationController::class, 'venueForm'])->name('custom-event.venue');
-Route::post('/customize-event/seating', [EventCustomizationController::class, 'seatingForm'])->name('custom-event.seating'); // POST for form submission
-Route::post('/customize-event/stage', [EventCustomizationController::class, 'stageForm'])->name('custom-event.stage'); // POST for form submission
-Route::post('/customize-event/catering', [EventCustomizationController::class, 'cateringForm'])->name('custom-event.catering'); // POST for form submission
-Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm'])->name('custom-event.photography'); // POST for form submission
-Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions');
+Route::get('/customize-event/seating', [EventCustomizationController::class, 'seatingForm'])->name('custom-event.seating'); // GET for navigation
+Route::post('/customize-event/seating', [EventCustomizationController::class, 'seatingForm']); // POST for form submission
+Route::get('/customize-event/stage', [EventCustomizationController::class, 'stageForm'])->name('custom-event.stage'); // GET for navigation
+Route::post('/customize-event/stage', [EventCustomizationController::class, 'stageForm']); // POST for form submission
+Route::get('/customize-event/catering', [EventCustomizationController::class, 'cateringForm'])->name('custom-event.catering'); // GET for navigation
+Route::post('/customize-event/catering', [EventCustomizationController::class, 'cateringForm']); // POST for form submission
+Route::get('/customize-event/photography', [EventCustomizationController::class, 'photographyForm'])->name('custom-event.photography'); // GET for navigation
+Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm']); // POST for form submission
+Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions'); // GET for navigation
+Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']); // POST for form submission
 Route::post('/customize-event/finalize', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');
