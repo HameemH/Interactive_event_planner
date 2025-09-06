@@ -33,14 +33,51 @@
                     </select>
                 </div>
 
+                <!-- Date Picker (DaisyUI) -->
+                <div class="mb-4">
+                    <label for="event_date" class="block text-left mb-2">Select Event Date</label>
+                    <input type="date" name="event_date" id="event_date" class="input input-bordered w-full" />
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('event_date');
+        const venueSelect = document.getElementById('predefined_venue');
+
+        dateInput.addEventListener('change', function() {
+            let selectedDate = this.value;
+            // Ensure date is in YYYY-MM-DD format
+            if (selectedDate) {
+                const dateObj = new Date(selectedDate);
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                selectedDate = `${yyyy}-${mm}-${dd}`;
+            }
+            fetch(`/api/available-venues?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(venues => {
+                    console.log(venues);
+                    // Make sure the dropdown is visible
+                    const predefinedVenueList = document.getElementById('predefined-venue-list');
+                    if (predefinedVenueList) {
+                        predefinedVenueList.classList.remove('hidden');
+                    }
+                    venueSelect.innerHTML = '<option value="" disabled selected>Select a venue</option>';
+                    venues.forEach(venue => {
+                        console.log(venue);
+                        venueSelect.innerHTML += `<option value="${venue.id}">${venue.name} (${venue.size} sq meters)</option>`;
+                    });
+                });
+        });
+    });
+    </script>
+                </div>
+
                 <!-- Predefined Venue List (hidden by default) -->
                 <div id="predefined-venue-list" class="mb-4 hidden">
                     <label for="predefined_venue" class="block text-left mb-2">Select Predefined Venue</label>
                     <select name="predefined_venue" id="predefined_venue" class="w-full bg-transparent outline-none text-base">
                         <option value="" disabled selected>Select a venue</option>
-                        <option value="Venue A">Venue A (100 sq meters)</option>
-                        <option value="Venue B">Venue B (200 sq meters)</option>
-                        <option value="Venue C">Venue C (300 sq meters)</option>
                     </select>
                 </div>
 
@@ -71,6 +108,15 @@
     @section('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const dateInput = document.getElementById('event_date');
+                const today = new Date();
+                today.setDate(today.getDate() + 7); // Add 7 days
+                const minDate = today.toISOString().split('T')[0];
+                dateInput.setAttribute('min', minDate);
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
                 const venueTypeSelect = document.getElementById('venue_type');
                 const predefinedVenueList = document.getElementById('predefined-venue-list');
                 const customVenueFields = document.getElementById('custom-venue-fields');
@@ -83,12 +129,15 @@
 
                 // Helper: Save venue info to localStorage (include type and predefined name)
                 function saveVenueInfo(type, predefined, size, address, cost) {
+                    const dateInput = document.getElementById('event_date');
+                    const selectedDate = dateInput ? dateInput.value : '';
                     const venueData = {
                         type: type,
                         predefined: predefined,
                         size: size,
                         address: address,
-                        cost: cost
+                        cost: cost,
+                        date: selectedDate
                     };
                     localStorage.setItem('event_venue', JSON.stringify(venueData));
                     updateTotalEstimatedCost();
