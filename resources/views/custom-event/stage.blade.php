@@ -141,9 +141,9 @@
                     // Basic stage images
                     if (selectedStage === 'basic') {
                         images = [
-                            'https://via.placeholder.com/150?text=Basic+Stage+1',
-                            'https://via.placeholder.com/150?text=Basic+Stage+2',
-                            'https://via.placeholder.com/150?text=Basic+Stage+3'
+                            'https://drive.usercontent.google.com/download?id=1Dw8ax14cOG_qfgPI_ei8BjFLnEorSngr&export=view&authuser=0',
+                            'https://drive.usercontent.google.com/download?id=1ZBWxiWGvpPseLtDcwajNoQD0MB02qoe8&export=view&authuser=0',
+                            'https://drive.google.com/uc?export=view&id=1GVRn3fVxehx8-5AeygDG6FwpJfyReN0p'
                         ];
                     }
                     // Premium stage images
