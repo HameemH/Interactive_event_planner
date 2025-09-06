@@ -1,9 +1,12 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\EventCustomizationController;
+use App\Http\Controllers\VenueController;
+
 
 
 Route::get('/db', function () {
@@ -46,3 +49,6 @@ Route::post('/customize-event/photography', [EventCustomizationController::class
 Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions'); // GET for navigation
 Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']); // POST for form submission
 Route::post('/customize-event/finalize', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');
+
+
+Route::get('/api/available-venues', [VenueController::class, 'availableVenues']);
