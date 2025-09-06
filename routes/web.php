@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\EventCustomizationController;
 use App\Http\Controllers\VenueController;
 
-
+use App\Http\Controllers\ReceiptController;
 
 Route::get('/db', function () {
     try {
@@ -31,8 +31,19 @@ Route::get('/wedding', function () {
 Route::get('/religious', function () {
     return view('BasePages.religious');
 });
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 Auth::routes();
+Route::post('/dashboard/message', [DashboardController::class, 'message'])->name('dashboard.message')->middleware('auth');
+use App\Http\Controllers\DashboardController;
+
+Route::get('/dashboard/receipt/{id}', [DashboardController::class, 'downloadReceipt'])
+    ->name('download.receipt')
+    ->middleware('auth'); // ensures only logged-in users can access
+
+Route::post('/dashboard/message', [DashboardController::class, 'message'])
+    ->name('dashboard.message')
+    ->middleware('auth');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -51,4 +62,5 @@ Route::post('/customize-event/xtraoptions', [EventCustomizationController::class
 Route::post('/customize-event/finalize', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');
 
 
+Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download');
 Route::get('/api/available-venues', [VenueController::class, 'availableVenues']);

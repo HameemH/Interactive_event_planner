@@ -80,12 +80,14 @@
                 // Helper: Save seating info to localStorage
                 function saveSeatingInfo(attendees, chairType, tableType, seatCover, cost) {
                     const seatingData = {
-                        attendees: attendees,
-                        chairType: chairType,
-                        tableType: tableType,
-                        seatCover: seatCover,
-                        cost: cost
-                    };
+    attendees: 150,
+    chairType: "Luxury",
+    tableType: "Round",
+    seatCover: "White Silk",
+    cost: 15000
+};
+localStorage.setItem("event_seating", JSON.stringify(seatingData));
+
                     localStorage.setItem('event_seating', JSON.stringify(seatingData));
                     updateTotalEstimatedCost();
                 }
