@@ -43,6 +43,7 @@
         const dateInput = document.getElementById('event_date');
         const venueSelect = document.getElementById('predefined_venue');
 
+        // Only trigger AJAX when date is changed by user
         dateInput.addEventListener('change', function() {
             let selectedDate = this.value;
             // Ensure date is in YYYY-MM-DD format
@@ -56,7 +57,7 @@
             fetch(`/api/available-venues?date=${selectedDate}`)
                 .then(response => response.json())
                 .then(venues => {
-                    console.log(venues);
+                    window.availableVenues = venues; // Store globally for later lookup
                     // Make sure the dropdown is visible
                     const predefinedVenueList = document.getElementById('predefined-venue-list');
                     if (predefinedVenueList) {
@@ -64,7 +65,6 @@
                     }
                     venueSelect.innerHTML = '<option value="" disabled selected>Select a venue</option>';
                     venues.forEach(venue => {
-                        console.log(venue);
                         venueSelect.innerHTML += `<option value="${venue.id}">${venue.name} (${venue.size} sq meters)</option>`;
                     });
                 });
@@ -83,6 +83,7 @@
 
                 <!-- Venue size/address input always shown, but readonly for predefined -->
                 <div id="custom-venue-fields" class="mb-4">
+                    <div id="venue-capacity-message" class="mb-2 text-sm text-indigo-700 font-semibold"></div>
                     <!-- Max Guests (hidden, used for JS only) -->
                     <input type="number" id="max_guests" class="hidden">
                     <div class="mb-4">
@@ -206,27 +207,33 @@
                     }
                 });
 
-                // Autofill custom fields based on selected predefined venue
+                // Replace hardcoded venue autofill logic with dynamic lookup
                 predefinedVenueSelect.addEventListener('change', function() {
-                    const selectedVenue = this.value;
-                    let size = 0;
-                    let address = '';
-                    if (selectedVenue === 'Venue A') {
-                        size = 100;
-                        address = '123 Venue A Address';
-                    } else if (selectedVenue === 'Venue B') {
-                        size = 200;
-                        address = '456 Venue B Address';
-                    } else if (selectedVenue === 'Venue C') {
-                        size = 300;
-                        address = '789 Venue C Address';
+                    const selectedVenueId = this.value;
+                    const selectedVenueObj = window.availableVenues?.find(v => v.id == selectedVenueId);
+                    if (selectedVenueObj) {
+                        // Fill the input boxes with the selected venue's data
+                        document.getElementById('venue_size').value = selectedVenueObj.size;
+                        document.getElementById('venue_address').value = selectedVenueObj.address;
+                        if (maxGuestsInput) maxGuestsInput.value = calculateMaxGuests(selectedVenueObj.size);
+                        estimatedCostElement.innerText = `Estimated Cost: $${selectedVenueObj.size * 10}`;
+                        // Show capacity message
+                        const capacityMsg = document.getElementById('venue-capacity-message');
+                        if (capacityMsg) {
+                            capacityMsg.innerText = `Capacity: ${calculateMaxGuests(selectedVenueObj.size)} guests`;
+                        }
+                        saveVenueInfo('predefined', selectedVenueObj.name, selectedVenueObj.size, selectedVenueObj.address, selectedVenueObj.size * 10);
+                    } else {
+                        document.getElementById('venue_size').value = '';
+                        document.getElementById('venue_address').value = '';
+                        if (maxGuestsInput) maxGuestsInput.value = '';
+                        estimatedCostElement.innerText = `Estimated Cost: $0`;
+                        const capacityMsg = document.getElementById('venue-capacity-message');
+                        if (capacityMsg) {
+                            capacityMsg.innerText = '';
+                        }
+                        saveVenueInfo('predefined', '', 0, '', 0);
                     }
-                    venueSizeInput.value = size;
-                    venueAddressInput.value = address;
-                        if (maxGuestsInput) maxGuestsInput.value = calculateMaxGuests(size);
-                    // Always update price and save info to localStorage
-                    estimatedCostElement.innerText = `Estimated Cost: $${size * 10}`;
-                    saveVenueInfo('predefined', selectedVenue, size, address, size * 10);
                 });
 
                 // Update max guests and cost on venue size change (only if custom)
@@ -254,20 +261,39 @@
                 // On page load, restore venue info and total price
                 (function restoreVenueInfo() {
                     const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+                    // Restore the selected date in the date picker
+                    if (venue.date) {
+                        document.getElementById('event_date').value = venue.date;
+                    }
                     if (venue.type === 'predefined') {
                         venueTypeSelect.value = 'predefined';
                         updateVenueTypeUI();
-                        if (venue.predefined) predefinedVenueSelect.value = venue.predefined;
-                        predefinedVenueSelect.dispatchEvent(new Event('change'));
+                        // Populate predefined venue fields directly from localStorage
+                        predefinedVenueSelect.value = venue.predefined || '';
+                        venueSizeInput.value = venue.size || '';
+                        venueAddressInput.value = venue.address || '';
+                        if (venue.size) maxGuestsInput.value = calculateMaxGuests(venue.size);
+                        if (venue.size) estimatedCostElement.innerText = `Estimated Cost: $${venue.size * 10}`;
+                        const capacityMsg = document.getElementById('venue-capacity-message');
+                        if (capacityMsg && venue.size) {
+                            capacityMsg.innerText = `Capacity: ${calculateMaxGuests(venue.size)} guests`;
+                        } else if (capacityMsg) {
+                            capacityMsg.innerText = '';
+                        }
+                        updateTotalEstimatedCost();
                     } else {
                         venueTypeSelect.value = 'custom';
                         updateVenueTypeUI();
-                        if (venue.size) venueSizeInput.value = venue.size;
-                        if (venue.address) venueAddressInput.value = venue.address;
+                        venueSizeInput.value = venue.size || '';
+                        venueAddressInput.value = venue.address || '';
                         if (venue.size) maxGuestsInput.value = calculateMaxGuests(venue.size);
                         if (venue.cost) estimatedCostElement.innerText = `Estimated Cost: $${venue.cost}`;
+                        const capacityMsg = document.getElementById('venue-capacity-message');
+                        if (capacityMsg) {
+                            capacityMsg.innerText = '';
+                        }
+                        updateTotalEstimatedCost();
                     }
-                    updateTotalEstimatedCost();
                 })();
             });
         </script>

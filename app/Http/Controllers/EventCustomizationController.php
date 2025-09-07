@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Models\Event;
+use Illuminate\Support\Facades\Auth;
 
 class EventCustomizationController extends Controller
 {
@@ -61,10 +63,24 @@ class EventCustomizationController extends Controller
     {
         $event = new Event();
         $event->user_id = Auth::id(); // make sure user is logged in
-        $event->name = $request->input('event_name');
-        $event->date = $request->input('event_date');
-        // ... other event fields
+        $event->category = $request->input('category');
+        $event->total_cost = $request->input('total_cost');
         $event->save();
+
+        // Save catering details
+        if ($request->has('event_catering')) {
+            $catering = $request->input('event_catering');
+            // Example: Save catering info in session or another table/model as needed
+            // Session::put('event_catering', $catering);
+            // Or, if you have a Catering model/table:
+            // Catering::create([
+            //     'event_id' => $event->id,
+            //     'catering_required' => $catering['catering_required'],
+            //     'per_person_cost' => $catering['per_person_cost'],
+            //     'total_catering_cost' => $catering['total_catering_cost'],
+            //     'total_guests' => $catering['total_guests'],
+            // ]);
+        }
 
         // 2. Redirect to dashboard
         return redirect()->route('dashboard');
