@@ -105,10 +105,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Catering
-    if (catering.package) {
-        document.getElementById('catering-info').innerText =
-            `Package: ${catering.package} | Guests: ${catering.guests} | Cost: ৳${catering.cost}`;
-        total += catering.cost || 0;
+    let cateringDetails = '';
+    if (catering.catering_required) {
+        cateringDetails = `Catering Required: ${catering.catering_required ? 'Yes' : 'No'} | Per Person: ৳${catering.per_person_cost} | Guests: ${catering.total_guests} | Total Cost: ৳${catering.total_catering_cost}`;
+        total += catering.total_catering_cost || 0;
+    }
+    // Integrate catering_selection info if available
+    const cateringSelection = JSON.parse(localStorage.getItem('catering_selection') || '{}');
+    if (cateringSelection.set_menu) {
+        cateringDetails += `\nSet Menu: ${cateringSelection.set_menu}`;
+    }
+    if (cateringSelection.extra_items && cateringSelection.extra_items.length > 0) {
+        cateringDetails += `\nExtra Items: ${cateringSelection.extra_items.join(', ')}`;
+    }
+    if (cateringDetails) {
+        document.getElementById('catering-info').innerText = cateringDetails;
     }
 
     // Photography
