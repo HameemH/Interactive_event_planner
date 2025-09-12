@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -59,14 +60,14 @@ class EventCustomizationController extends Controller
 
     public function store(Request $request)
     {
-        $event = new Event();
-        $event->user_id = Auth::id(); // make sure user is logged in
-        $event->name = $request->input('event_name');
-        $event->date = $request->input('event_date');
-        // ... other event fields
-        $event->save();
+        // Store the final event data into the database
+        $eventData = Session::all();  // Get all session data
 
-        // 2. Redirect to dashboard
-        return redirect()->route('dashboard');
+        // Save event data to database logic goes here
+
+        // Clear session after storing data
+        Session::flush();
+
+        return redirect()->route('events.dashboard');
     }
 }
