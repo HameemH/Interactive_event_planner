@@ -161,6 +161,58 @@ document.addEventListener('DOMContentLoaded', function () {
       const img = document.getElementById('stage-image');
       img.src = stage.image;
       img.classList.remove('hidden');
+    const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
+    const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
+    const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
+    const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
+    const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
+    const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
+
+    let total = 0;
+
+    // Venue
+    if (venue.size) {
+        document.getElementById('venue-info').innerText =
+            `${venue.type === 'predefined' ? venue.predefined : 'Custom'} | Size: ${venue.size} sqm | Address: ${venue.address} | Cost: ৳${venue.cost}`;
+        total += venue.cost || 0;
+    }
+
+    // Seating
+    if (seating.attendees) {
+        document.getElementById('seating-info').innerText =
+            `${seating.attendees} guests | Chair: ${seating.chairType} | Table: ${seating.tableType} | Seat Cover: ${seating.seatCover} | Cost: ৳${seating.cost}`;
+        total += seating.cost || 0;
+    }
+
+    // Stage
+    if (stage.type) {
+        document.getElementById('stage-info').innerText =
+            `${stage.type} stage ${stage.decoration ? '+ Decoration' : ''} | Cost: ৳${stage.cost}`;
+        if (stage.image) {
+            const img = document.getElementById('stage-image');
+            img.src = stage.image;
+            img.classList.remove('hidden');
+        }
+        total += stage.cost || 0;
+    }
+
+    // Catering
+    let cateringDetails = '';
+    if (catering.catering_required) {
+        cateringDetails = `Catering Required: ${catering.catering_required ? 'Yes' : 'No'} | Per Person: ৳${catering.per_person_cost} | Guests: ${catering.total_guests} | Total Cost: ৳${catering.total_catering_cost}`;
+        total += catering.total_catering_cost || 0;
+    }
+    // Integrate catering_selection info if available
+    const cateringSelection = JSON.parse(localStorage.getItem('catering_selection') || '{}');
+    if (cateringSelection.set_menu) {
+        cateringDetails += `\nSet Menu: ${cateringSelection.set_menu}`;
+    }
+    if (cateringSelection.extra_items && cateringSelection.extra_items.length > 0) {
+        cateringDetails += `\nExtra Items: ${cateringSelection.extra_items.join(', ')}`;
+    }
+    if (cateringDetails) {
+        document.getElementById('catering-info').innerText = cateringDetails;
+
     }
     total += stage.cost || 0;
   }

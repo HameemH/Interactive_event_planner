@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -8,6 +7,7 @@ use App\Http\Controllers\EventCustomizationController;
 use App\Http\Controllers\VenueController;
 
 use App\Http\Controllers\ReceiptController;
+use App\Models\Event;
 
 Route::get('/db', function () {
     try {
@@ -59,7 +59,9 @@ Route::get('/customize-event/photography', [EventCustomizationController::class,
 Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm']); // POST for form submission
 Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions'); // GET for navigation
 Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']); // POST for form submission
-Route::post('/customize-event/finalize', [EventCustomizationController::class, 'store'])->name('custom-event.finalize');
+Route::post('/customize-event/finalize', function() {
+    return redirect()->route('dashboard');
+})->name('custom-event.finalize');
 
 
 Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download');

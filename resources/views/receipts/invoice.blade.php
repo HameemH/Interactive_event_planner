@@ -51,9 +51,16 @@
         <div class="section">
             <h2>Catering</h2>
             <div class="box">
-                Package: {{ $data['catering']['package'] ?? '-' }} |
-                Guests: {{ $data['catering']['guests'] ?? 0 }} |
-                Cost: ৳{{ $data['catering']['cost'] ?? 0 }}
+                Catering Required: {{ $data['catering']['catering_required'] ? 'Yes' : 'No' }} |
+                Per Person: ৳{{ $data['catering']['per_person_cost'] ?? '-' }} |
+                Guests: {{ $data['catering']['total_guests'] ?? 0 }} |
+                Total Cost: ৳{{ $data['catering']['total_catering_cost'] ?? 0 }}
+                @if(isset($data['catering_selection']['set_menu']))<br>
+                    Set Menu: {{ $data['catering_selection']['set_menu'] }}
+                @endif
+                @if(isset($data['catering_selection']['extra_items']) && count($data['catering_selection']['extra_items']) > 0)<br>
+                    Extra Items: {{ implode(', ', $data['catering_selection']['extra_items']) }}
+                @endif
             </div>
         </div>
 
