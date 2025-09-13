@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Events - Citizen Management</title>
+  <title>Events  Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Fonts -->
@@ -96,10 +96,51 @@
       transform: scale(1.05);
       box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     }
+
+    /* Navbar specific styles */
+    .glass-navbar {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .logo-text {
+      background: linear-gradient(to right, #6366f1, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tech-button {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 500;
+      color: #6366f1;
+      background: rgba(99, 102, 241, 0.1);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .tech-button:hover {
+      background: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
   </style>
 </head>
 
 <body>
+
+<!-- Navbar -->
+<nav class="glass-navbar fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 shadow-lg">
+    <!-- Logo -->
+    <a href="/" class="flex items-center space-x-4">
+        <img src="{{ asset('images/momento.png') }}" alt="Momento Logo" class="h-14 w-14 object-contain">
+        <span class="text-3xl font-extrabold logo-text animate-gradient-text">Momento</span>
+    </a>
+    <div class="flex items-center space-x-4">
+        <a href="/" class="tech-button">Home</a>
+        <a href="/customize-event" class="tech-button">Customize Event</a>
+        <a href="/login" class="tech-button">Login</a>
+        <a href="/register" class="tech-button">Register</a>
+    </div>
+</nav>
+<div class="pt-24">
 
 <h1 class="text-5xl font-extrabold mb-12 text-blue" style="font-family: 'Playfair Display', serif; z-index:10;">
   Event Management
@@ -196,5 +237,6 @@
   setInterval(autoSlide, 3000);
 </script>
 
+</div>
 </body>
 </html>
