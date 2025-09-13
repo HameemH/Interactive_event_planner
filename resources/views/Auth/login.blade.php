@@ -1,17 +1,73 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden 
-            bg-gradient-to-br from-indigo-200 via-white to-purple-200">
+<style>
+  /* Animated Gradient Background */
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .bg-animated {
+    background: linear-gradient(270deg, rgba(99,102,241,0.4), rgba(236,72,153,0.4), rgba(139,92,246,0.4));
+    background-size: 600% 600%;
+    animation: gradientShift 15s ease infinite;
+  }
 
-  <!-- Abstract Gradient Blobs -->
-  <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-400/30 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-[-80px] right-[-60px] w-80 h-80 bg-purple-400/20 rounded-full blur-3xl"></div>
-  <div class="absolute top-1/2 left-1/2 w-60 h-60 bg-pink-300/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
+  /* Input focus effect */
+  .glass-input input:focus {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+  }
+
+  /* Fade-in-up animation */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  /* Ripple effect for button */
+  button {
+    position: relative;
+    overflow: hidden;
+  }
+  button::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.4);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+  }
+  button:active::after {
+    width: 200%;
+    height: 200%;
+    opacity: 1;
+    transition: width 0.4s ease, height 0.4s ease, opacity 1s ease;
+  }
+</style>
+
+<div class="min-h-screen flex items-center justify-center p-4 relative">
+  <!-- Background Image with Animated Gradient Overlay -->
+ <div class="fixed inset-0 w-full h-full">
+  <img src="{{ asset('images/event-bg.jpg') }}" 
+       alt="Event background" 
+       class="w-full h-full object-cover">
+  <div class="absolute inset-0 bg-animated"></div>
+</div>
 
   <!-- Glass Card -->
   <div class="relative z-10 glass-card p-8 pt-6 rounded-3xl w-[380px] 
-              text-center backdrop-blur-xl bg-white/30 shadow-2xl border border-white/20">
+              text-center backdrop-blur-xl bg-white/20 shadow-2xl
+              transition duration-500 hover:shadow-[0_0_40px_rgba(99,102,241,0.5)]
+              animate-fade-in-up">
     <!-- Logo & Title -->
     <div class="mb-6 flex flex-col items-center">
       <div class="w-16 h-16 rounded-full flex items-center justify-center 
@@ -40,7 +96,7 @@
     <form method="POST" action="{{ route('login') }}" class="space-y-4">
       @csrf
       <!-- Email Field -->
-      <div class="flex items-center px-4 py-3 rounded-full glass-input bg-white/50">
+      <div class="flex items-center px-4 py-3 rounded-full glass-input bg-white/40">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600 mr-2" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path d="M2 8l10 6 10-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -49,7 +105,7 @@
                class="bg-transparent w-full outline-none text-base placeholder-gray-500" required />
       </div>
       <!-- Password Field -->
-      <div class="flex items-center px-4 py-3 rounded-full glass-input bg-white/50">
+      <div class="flex items-center px-4 py-3 rounded-full glass-input bg-white/40">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600 mr-2" fill="none"
              viewBox="0 0 24 24" stroke="currentColor">
           <path d="M17 11V7a5 5 0 00-10 0v4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -60,7 +116,7 @@
       </div>
 
       <!-- Role Selector -->
-      <div class="px-4 py-3 rounded-full glass-input bg-white/50 flex items-center">
+      <div class="px-4 py-3 rounded-full glass-input bg-white/40 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600 mr-2" viewBox="0 0 24 24"
              fill="none" stroke="currentColor">
           <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

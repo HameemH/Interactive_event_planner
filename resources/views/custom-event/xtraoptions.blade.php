@@ -1,125 +1,148 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex items-center justify-center min-h-[calc(100vh-64px)] relative">
-    <div class="glass-card p-10 pt-8 rounded-3xl w-[600px] min-h-[400px] flex flex-col justify-between shadow-lg">
-        <a href="{{ route('custom-event.photography') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
-            &#8592; Go Back
-        </a>
-        <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
-            <span id="extra-estimated-cost">Estimated Cost: ৳0</span>
-        </div>
-        <!-- Total Estimated Price Section -->
-        <div class="absolute top-16 right-4 bg-indigo-800 text-white px-4 py-2 rounded-full text-sm">
-            <span id="total-estimated-cost">Total Estimated Price: ৳0</span>
-        </div>
-        <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Extra Options</h1>
-        <form method="POST" action="{{ route('custom-event.finalize') }}">
-            @csrf
-            <div class="mb-6 grid grid-cols-2 gap-4">
-                <div class="flex items-center">
-                    <input type="checkbox" name="photo_booth" id="photo_booth" data-price="3000" class="mr-2 extra-option">
-                    <label for="photo_booth">Photo Booth (+৳3000)</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="coffee_booth" id="coffee_booth" data-price="2500" class="mr-2 extra-option">
-                    <label for="coffee_booth">Coffee Booth (+৳2500)</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="mehendi_booth" id="mehendi_booth" data-price="2000" class="mr-2 extra-option">
-                    <label for="mehendi_booth">Mehendi Booth (+৳2000)</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="paan_booth" id="paan_booth" data-price="1500" class="mr-2 extra-option">
-                    <label for="paan_booth">Paan Booth (+৳1500)</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="fuchka_stall" id="fuchka_stall" data-price="1800" class="mr-2 extra-option">
-                    <label for="fuchka_stall">Fuchka Stall (+৳1800)</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="sketch_booth" id="sketch_booth" data-price="2200" class="mr-2 extra-option">
-                    <label for="sketch_booth">Sketch Booth (+৳2200)</label>
-                </div>
-            </div>
-            <div class="mt-4 mb-4">
-                <label>Estimated Cost</label>
-                <input type="text" id="extra_cost" readonly value="৳0" class="w-full bg-transparent outline-none text-base">
-            </div>
-            <button type="submit" class="w-full py-3 rounded-full bg-white/40 text-gray-800 font-semibold hover:scale-105 transition transform mt-auto">
-                Finalize Event
-            </button>
-        </form>
-    </div>
+<style>
+  /* Animated Gradient Overlay */
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .bg-animated {
+    background: linear-gradient(270deg, rgba(99,102,241,0.4), rgba(236,72,153,0.4), rgba(139,92,246,0.4));
+    background-size: 600% 600%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  /* Glass Effect */
+  .glass-card {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Gradient Badge */
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .animate-gradient {
+    animation: gradientMove 6s ease infinite;
+    background-size: 200% 200%;
+  }
+</style>
+
+<div class="min-h-screen flex items-center justify-center p-4 relative">
+  <!-- Background Image with Animated Gradient -->
+  <div class="fixed inset-0 w-full h-full">
+      <img src="{{ asset('images/event-bg.jpg') }}" alt="Event background" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-animated"></div>
+  </div>
+
+  <!-- Glass Card -->
+  <div class="glass-card p-10 pt-8 rounded-3xl w-[600px] min-h-[400px] flex flex-col shadow-xl relative z-10">
+
+      <!-- Go Back -->
+      <a href="{{ route('custom-event.photography') }}" class="absolute top-4 left-4 text-purple-900 hover:text-indigo-400 font-semibold transition">
+          &#8592; Go Back
+      </a>
+
+      <!-- Title -->
+      <h1 class="text-3xl font-extrabold mb-4 text-center">
+          <span class="px-6 py-2 rounded-full text-white shadow-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient">
+              Extra Options
+          </span>
+      </h1>
+
+      <!-- Extra Options Form -->
+      <form method="POST" action="{{ route('custom-event.finalize') }}" class="flex flex-col flex-grow space-y-6">
+          @csrf
+
+          <div class="grid grid-cols-2 gap-4">
+              @php
+                  $extras = [
+                      'photo_booth' => 3000,
+                      'coffee_booth' => 2500,
+                      'mehendi_booth' => 2000,
+                      'paan_booth' => 1500,
+                      'fuchka_stall' => 1800,
+                      'sketch_booth' => 2200,
+                  ];
+              @endphp
+              @foreach($extras as $id => $price)
+                  <div class="flex items-center">
+                      <input type="checkbox" name="{{ $id }}" id="{{ $id }}" data-price="{{ $price }}" class="mr-2 extra-option">
+                      <label for="{{ $id }}">{{ ucwords(str_replace('_',' ',$id)) }} (+৳{{ $price }})</label>
+                  </div>
+              @endforeach
+          </div>
+
+          <!-- Estimated Cost -->
+          <div class="mt-auto flex flex-col gap-2 items-end">
+              <div class="bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow">
+                  <span id="extra-estimated-cost">Estimated Cost: ৳0</span>
+              </div>
+              <div class="bg-indigo-800 text-white px-4 py-2 rounded-full text-sm shadow">
+                  <span id="total-estimated-cost">Total Estimated Price: ৳0</span>
+              </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold hover:scale-105 transition transform shadow-lg">
+              Finalize Event
+          </button>
+      </form>
+  </div>
 </div>
+
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const extraOptions = document.querySelectorAll('.extra-option');
-    const extraCostInput = document.getElementById('extra_cost');
     const extraEstimatedCost = document.getElementById('extra-estimated-cost');
     const totalEstimatedCostElement = document.getElementById('total-estimated-cost');
 
-    // Helper: Save extra options info to localStorage
     function saveExtraInfo(selected, cost) {
-        const extraData = {
-            selected: selected,
-            cost: cost
-        };
+        const extraData = { selected, cost };
         localStorage.setItem('event_extra', JSON.stringify(extraData));
         updateTotalEstimatedCost();
     }
 
-    // Helper: Update total estimated cost from all steps
     function updateTotalEstimatedCost() {
         let total = 0;
-        // Venue
-        const venue = JSON.parse(localStorage.getItem('event_venue') || '{}');
-        if (venue.cost) total += venue.cost;
-        // Seating
-        const seating = JSON.parse(localStorage.getItem('event_seating') || '{}');
-        if (seating.cost) total += seating.cost;
-        // Stage
-        const stage = JSON.parse(localStorage.getItem('event_stage') || '{}');
-        if (stage.cost) total += stage.cost;
-        // Catering
-        const catering = JSON.parse(localStorage.getItem('event_catering') || '{}');
-        if (catering.cost) total += catering.cost;
-        // Photography
-        const photography = JSON.parse(localStorage.getItem('event_photography') || '{}');
-        if (photography.cost) total += photography.cost;
-        // Extra Options
-        const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
-        if (extra.cost) total += extra.cost;
+        ['event_venue','event_seating','event_stage','event_catering','event_photography','event_extra'].forEach(k => {
+            const d = JSON.parse(localStorage.getItem(k) || '{}');
+            if(d.cost) total += d.cost;
+        });
         totalEstimatedCostElement.innerText = `Total Estimated Price: ৳${total}`;
     }
 
     function updateExtraCost() {
-        let cost = 0;
-        let selected = [];
-        extraOptions.forEach(function(opt) {
-            if (opt.checked) {
-                cost += parseInt(opt.getAttribute('data-price')) || 0;
+        let cost = 0, selected = [];
+        extraOptions.forEach(opt => {
+            if(opt.checked){
+                cost += parseInt(opt.dataset.price) || 0;
                 selected.push(opt.id);
             }
         });
-        extraCostInput.value = `৳${cost}`;
         extraEstimatedCost.innerText = `Estimated Cost: ৳${cost}`;
         saveExtraInfo(selected, cost);
     }
-    extraOptions.forEach(function(opt) {
-        opt.addEventListener('change', updateExtraCost);
-    });
-    // On page load, restore extra info and total price
-    (function restoreExtraInfo() {
+
+    extraOptions.forEach(opt => opt.addEventListener('change', updateExtraCost));
+
+    // Restore extra info
+    (function restoreExtraInfo(){
         const extra = JSON.parse(localStorage.getItem('event_extra') || '{}');
-        if (extra.selected && Array.isArray(extra.selected)) {
-            extraOptions.forEach(function(opt) {
-                opt.checked = extra.selected.includes(opt.id);
-            });
+        if(extra.selected && Array.isArray(extra.selected)){
+            extraOptions.forEach(opt => { opt.checked = extra.selected.includes(opt.id); });
         }
         updateExtraCost();
-        updateTotalEstimatedCost();
     })();
 });
 </script>
