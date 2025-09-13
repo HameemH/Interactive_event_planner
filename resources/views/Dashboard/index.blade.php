@@ -236,31 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Download receipt button
   document.getElementById('download-receipt').addEventListener('click', function () {
     const eventData = { venue, seating, stage, catering, photography, extra, total };
-    fetch('/dashboard/receipt/download', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-      },
-      body: JSON.stringify({ event_data: eventData })
-    })
-    .then(response => {
-      if (!response.ok) throw new Error('Network response was not ok');
-      return response.blob();
-    })
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'event_receipt.pdf';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    })
-    .catch(error => {
-      alert('Failed to download receipt PDF.');
-    });
+    window.location.href = `/download-receipt?event_data=${encodeURIComponent(JSON.stringify(eventData))}`;
   });
 
   document.getElementById('pay-btn').addEventListener('click', function () {
