@@ -63,20 +63,20 @@
         </span>
       </h1>
       <p class="text-purple-900 text-center mb-6">Choose your catering options for the event</p>
+<div class="w-full mb-8">
+    <div class="flex items-center justify-between text-sm font-medium text-blue-900 mb-2">
+        <span>Step 1: Venue</span>
+        <span>Step 2: Seating</span>
+        <span>Step 3: Stage</span>
+        <span class="font-bold text-purple-600">Step 4: Catering</span>
+        <span>Step 5: Photography</span>
+    </div>
+    <div class="w-full bg-white/30 rounded-full h-2 overflow-hidden">
+        <!-- Step 4 = 80% -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style="width: 80%;"></div>
+    </div>
+</div>
 
-      <!-- Progress Bar -->
-      <div class="w-full mb-8">
-          <div class="flex items-center justify-between text-sm font-medium text-blue-900 mb-2">
-              <span>Step 1: Venue</span>
-              <span>Step 2: Seating</span>
-              <span>Step 3: Stage</span>
-              <span>Step 4: Catering</span>
-              <span>Step 5: Photography</span>
-          </div>
-          <div class="w-full bg-white/30 rounded-full h-2 overflow-hidden">
-              <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style="width: 80%;"></div>
-          </div>
-      </div>
 
       <!-- Form -->
       <form method="POST" action="{{ route('custom-event.photography') }}" class="space-y-6">
