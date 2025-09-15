@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Momento</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     @yield('scripts')
@@ -85,13 +86,29 @@
                     <a href="{{ route('register') }}" class="tech-button">Register</a>
                 @endif
             @else
-                <div class="relative inline-block text-left">
-                    <button type="button" class="inline-flex items-center px-4 py-2 text-white font-semibold tech-button focus:outline-none" id="user-menu" aria-haspopup="true" aria-expanded="true">
+                @if(Auth::user()->isOrganizer())
+                    <a href="{{ route('admin.dashboard') }}" class="tech-button">Admin Panel</a>
+                @endif
+                <a href="{{ route('dashboard') }}" class="tech-button">Dashboard</a>
+                <div class="relative inline-block text-left" x-data="{ open: false }">
+                    <button type="button" class="inline-flex items-center px-4 py-2 text-white font-semibold tech-button focus:outline-none" @click="open = !open">
                         {{ Auth::user()->name }}
                         <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
+                    
+                    <div x-show="open" @click.away="open = false" x-transition 
+                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                         style="display: none;">
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
                 </div>
             @endguest
         </div>

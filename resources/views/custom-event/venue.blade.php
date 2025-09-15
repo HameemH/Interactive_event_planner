@@ -50,6 +50,25 @@
       </div>
       <div class="relative z-10 flex items-center justify-center w-full">
         <div class="glass-card p-10 pt-8 rounded-3xl w-full max-w-xl min-h-[500px] flex flex-col justify-between shadow-lg animate-fade-in-up bg-white/20 backdrop-blur-xl">
+      <!-- Header and Progress Bar -->
+      <div class="w-full flex flex-col items-center mb-8 mt-8">
+          <h1 class="text-3xl font-extrabold text-indigo-800 mb-2">Customize Your Event</h1>
+          <!-- Progress Bar -->
+          <div class="w-full mb-8">
+                <div class="flex items-center justify-between text-sm font-medium text-blue-900 mb-2">
+        <span class="font-bold text-purple-600">Step 1: Venue</span>
+        <span class="">Step 2: Seating</span>
+        <span class="">Step 3: Stage</span>
+        <span class="">Step 4: Catering</span>
+        <span class="">Step 5: Photography</span>
+    </div>
+            <div class="w-full bg-white/30 rounded-full h-2 overflow-hidden">
+                <!-- Step 1 = 20% -->
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style="width: 20%;"></div>
+            </div>
+        </div>
+      </div>
+
       <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Select Your Venue</h1>
       <a href="{{ route('custom-event.index') }}" class="absolute top-4 left-4 text-gray-700 hover:text-indigo-600 font-semibold">
         &#8592; Go Back

@@ -27,7 +27,19 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/dashboard';
+
+    /**
+     * Get the post-login redirect path based on user role.
+     */
+    protected function redirectTo()
+    {
+        if (Auth::user()->isAdmin()) {
+            return '/admin/dashboard'; // Admins go to admin dashboard
+        }
+        
+        return '/dashboard'; // Guests go to regular dashboard
+    }
 
     /**
      * Create a new controller instance.
@@ -40,36 +52,5 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-    /**
-     * Validate the user login request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    protected function validateLogin(\Illuminate\Http\Request $request)
-    {
-        $request->validate([
-            $this->username() => 'required|string',
-            'password' => 'required|string',
-            'role' => 'required|in:organizer,guest',
-        ]);
-    }
 
-    /**
-     * Attempt to log the user into the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function attemptLogin(\Illuminate\Http\Request $request)
-    {
-        $credentials = $request->only($this->username(), 'password');
-        $credentials['role'] = $request->role;
-
-        return $this->guard()->attempt(
-            $credentials, $request->boolean('remember')
-        );
-    }
 }
