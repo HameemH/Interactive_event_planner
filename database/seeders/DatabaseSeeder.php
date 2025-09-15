@@ -22,5 +22,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed venues
         $this->call(\Database\Seeders\VenueSeeder::class);
+        
+        // Seed admin user
+        $this->call(\Database\Seeders\AdminUserSeeder::class);
     }
 }

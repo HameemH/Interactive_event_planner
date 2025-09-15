@@ -133,6 +133,7 @@
                class="bg-transparent w-full outline-none text-base placeholder-gray-500" required />
       </div>
 
+
       <!-- Signup Button -->
       <button type="submit"
               class="w-full py-2 rounded-full bg-indigo-500/90 text-white font-semibold 

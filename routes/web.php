@@ -31,7 +31,7 @@ Route::get('/wedding', function () {
 Route::get('/religious', function () {
     return view('BasePages.religious');
 });
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Auth::routes();
 Route::post('/dashboard/message', [DashboardController::class, 'message'])->name('dashboard.message')->middleware('auth');
@@ -47,22 +47,33 @@ Route::post('/dashboard/message', [DashboardController::class, 'message'])
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/customize-event', [EventCustomizationController::class, 'index'])->name('custom-event.index');
-Route::get('/customize-event/venue', [EventCustomizationController::class, 'venueForm'])->name('custom-event.venue');
-Route::get('/customize-event/seating', [EventCustomizationController::class, 'seatingForm'])->name('custom-event.seating'); // GET for navigation
-Route::post('/customize-event/seating', [EventCustomizationController::class, 'seatingForm']); // POST for form submission
-Route::get('/customize-event/stage', [EventCustomizationController::class, 'stageForm'])->name('custom-event.stage'); // GET for navigation
-Route::post('/customize-event/stage', [EventCustomizationController::class, 'stageForm']); // POST for form submission
-Route::get('/customize-event/catering', [EventCustomizationController::class, 'cateringForm'])->name('custom-event.catering'); // GET for navigation
-Route::post('/customize-event/catering', [EventCustomizationController::class, 'cateringForm']); // POST for form submission
-Route::get('/customize-event/photography', [EventCustomizationController::class, 'photographyForm'])->name('custom-event.photography'); // GET for navigation
-Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm']); // POST for form submission
-Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions'); // GET for navigation
-Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']); // POST for form submission
-Route::post('/customize-event/finalize', function() {
-    return redirect()->route('dashboard');
-})->name('custom-event.finalize');
+// Routes accessible by both organizers and guests (logged in users)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/customize-event', [EventCustomizationController::class, 'index'])->name('custom-event.index');
+    Route::get('/customize-event/venue', [EventCustomizationController::class, 'venueForm'])->name('custom-event.venue');
+    Route::get('/customize-event/seating', [EventCustomizationController::class, 'seatingForm'])->name('custom-event.seating');
+    Route::post('/customize-event/seating', [EventCustomizationController::class, 'seatingForm']);
+    Route::get('/customize-event/stage', [EventCustomizationController::class, 'stageForm'])->name('custom-event.stage');
+    Route::post('/customize-event/stage', [EventCustomizationController::class, 'stageForm']);
+    Route::get('/customize-event/catering', [EventCustomizationController::class, 'cateringForm'])->name('custom-event.catering');
+    Route::post('/customize-event/catering', [EventCustomizationController::class, 'cateringForm']);
+    Route::get('/customize-event/photography', [EventCustomizationController::class, 'photographyForm'])->name('custom-event.photography');
+    Route::post('/customize-event/photography', [EventCustomizationController::class, 'photographyForm']);
+    Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions');
+    Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']);
+    Route::post('/customize-event/finalize', function() {
+        return redirect()->route('dashboard');
+    })->name('custom-event.finalize');
+});
+
+// Routes accessible only by organizers (admins)
+Route::middleware(['auth', 'role:organizer'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('users');
+    Route::post('/users/{user}/promote', [App\Http\Controllers\Admin\AdminController::class, 'promoteUser'])->name('users.promote');
+    Route::post('/users/{user}/demote', [App\Http\Controllers\Admin\AdminController::class, 'demoteUser'])->name('users.demote');
+});
 
 
-Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download');
+Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download')->middleware('auth');
 Route::get('/api/available-venues', [VenueController::class, 'availableVenues']);
