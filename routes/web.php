@@ -47,6 +47,11 @@ Route::post('/dashboard/message', [DashboardController::class, 'message'])
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// Access denied route
+Route::get('/access-denied', function () {
+    return view('errors.access-denied');
+})->name('access.denied')->middleware('auth');
+
 // Routes accessible by both organizers and guests (logged in users)
 Route::middleware(['auth'])->group(function () {
     Route::get('/customize-event', [EventCustomizationController::class, 'index'])->name('custom-event.index');

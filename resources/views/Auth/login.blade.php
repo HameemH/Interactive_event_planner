@@ -85,9 +85,15 @@
 
     <!-- Validation Errors -->
     @if ($errors->any())
-        <div class="mb-4 text-left">
+        <div class="mb-4 p-3 bg-red-100/80 border border-red-300 rounded-lg">
+            <div class="flex items-center mb-2">
+                <svg class="h-4 w-4 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 8.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <span class="font-semibold text-red-700 text-sm">Login Error</span>
+            </div>
             @foreach ($errors->all() as $error)
-                <p class="text-red-500 text-xs">{{ $error }}</p>
+                <p class="text-red-600 text-sm mb-1">{{ $error }}</p>
             @endforeach
         </div>
     @endif
@@ -116,16 +122,16 @@
       </div>
 
       <!-- Role Selector -->
-      <div class="px-4 py-3 rounded-full glass-input bg-white/40 flex items-center">
+      <div class="px-4 py-3 rounded-full glass-input bg-white/40 flex items-center border-2 border-indigo-200">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600 mr-2" viewBox="0 0 24 24"
              fill="none" stroke="currentColor">
-          <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <select name="role" required
                 class="w-full bg-transparent outline-none text-base appearance-none text-gray-700">
-          <option value="" disabled selected>Select Role</option>
-          <option value="organizer" {{ old('role') == 'organizer' ? 'selected' : '' }}>Organizer</option>
-          <option value="guest" {{ old('role') == 'guest' ? 'selected' : '' }}>Guest</option>
+          <option value="" disabled selected>Select Your Role</option>
+          <option value="organizer" {{ old('role') == 'organizer' ? 'selected' : '' }}>Organizer (Admin)</option>
+          <option value="guest" {{ old('role') == 'guest' ? 'selected' : '' }}>Guest (User)</option>
         </select>
       </div>
 
