@@ -5,9 +5,22 @@
   <title>Wedding Packages - Citizen Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: linear-gradient(145deg, #d3d8ff, #eef1ff);
-    }
+   /* Background with animated gradient */
+  
+body {
+  background: linear-gradient(270deg, #ddd3f5ff, #fbc2eb, #fad0c4, #a18cd1);
+  background-size: 800% 800%;
+  animation: bgMove 20s ease infinite;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+    
     .neumorphic {
       background: #e8ebff;
       box-shadow: 8px 8px 16px #c2c5d6, -8px -8px 16px #ffffff;
@@ -20,13 +33,18 @@
 </head>
 <body class="min-h-screen p-10 font-sans text-gray-800">
 
-  <h1 class="text-4xl font-extrabold text-center mb-12">Wedding Packages</h1>
+  <h1 class="text-5xl font-extrabold text-center mb-12 bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-transparent animate-pulse">
+  Wedding Packages
+</h1>
+
 
   <!-- Package List -->
   <div class="neumorphic p-6 rounded-[30px] space-y-6">
 
     <!-- Classic -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('classic')">
+     <div class="flex justify-between items-center p-6 bg-gradient-to-br from-indigo-200 via-pink-100 to-yellow-100 
+            rounded-[25px] shadow-2xl hover:scale-105 hover:shadow-purple-500/50 transition duration-300 cursor-pointer
+            backdrop-blur-sm border border-indigo-300" onclick="openGallery('classic')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/1.jpg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -35,11 +53,13 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">79,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Order Now</button>
+      <button class="px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-500 shadow-lg hover:shadow-pink-500/50 hover:scale-105 transition">Order Now</button>
     </div>
 
     <!-- Elegant -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('elegant')">
+<div class="flex justify-between items-center p-6 bg-gradient-to-br from-indigo-200 via-pink-100 to-yellow-100 
+            rounded-[25px] shadow-2xl hover:scale-105 hover:shadow-purple-500/50 transition duration-300 cursor-pointer
+            backdrop-blur-sm border border-indigo-300" onclick="openGallery('elegant')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/2.webp')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -48,11 +68,13 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">89,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Order Now</button>
+      <button class="px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-500 shadow-lg hover:shadow-pink-500/50 hover:scale-105 transition">Order Now</button>
     </div>
 
     <!-- Luxury -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('luxury')">
+   <div class="flex justify-between items-center p-6 bg-gradient-to-br from-indigo-200 via-pink-100 to-yellow-100 
+            rounded-[25px] shadow-2xl hover:scale-105 hover:shadow-purple-500/50 transition duration-300 cursor-pointer
+            backdrop-blur-sm border border-indigo-300" onclick="openGallery('luxury')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/3.jpg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -61,11 +83,13 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">1,49,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Order Now</button>
+      <button class="px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-500 shadow-lg hover:shadow-pink-500/50 hover:scale-105 transition">Order Now</button>
     </div>
 
     <!-- Royal -->
-    <div class="flex justify-between items-center p-4 bg-[#e8ebff] rounded-[20px] shadow-md hover:scale-[1.01] transition cursor-pointer" onclick="openGallery('royal')">
+    <div class="flex justify-between items-center p-6 bg-gradient-to-br from-indigo-200 via-pink-100 to-yellow-100 
+            rounded-[25px] shadow-2xl hover:scale-105 hover:shadow-purple-500/50 transition duration-300 cursor-pointer
+            backdrop-blur-sm border border-indigo-300" onclick="openGallery('royal')">
       <div class="flex items-center gap-6">
         <img src="{{asset('images/4.jpeg')}}" class="w-72 h-44 object-cover rounded-xl" />
         <div>
@@ -74,27 +98,35 @@
           <p class="text-sm font-semibold text-indigo-600 mt-2">2,99,999 BDT</p>
         </div>
       </div>
-      <button class="px-4 py-2 neumorphic rounded-full text-sm font-semibold text-gray-700 hover:bg-indigo-50">Order Now</button>
+      <button class="px-5 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-500 shadow-lg hover:shadow-pink-500/50 hover:scale-105 transition">Order Now</button>
     </div>
 
     <!-- Customize Your Own (HIGHLIGHTED) -->
-    <div class="flex justify-between items-center p-6 bg-gradient-to-r from-indigo-100 to-blue-200 rounded-[20px] shadow-xl border border-indigo-300 hover:scale-[1.01] transition">
-      <div class="flex items-center gap-6">
-        <img src="{{asset('images/5.jpeg')}}" class="w-72 h-44 object-cover rounded-xl border border-indigo-400" />
-        <div>
-          <h2 class="text-xl font-extrabold text-indigo-700">Customize Your Own Package</h2>
-          <p class="text-sm text-gray-700 mt-1">Mix & match venue, services, catering and create your dream wedding experience.</p>
-          <a href="customize-wedding.html" class="mt-2 inline-block text-sm font-semibold text-blue-700 hover:underline">Start Customizing →</a>
-        </div>
-      </div>
-      <a href="customize-wedding.html" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-full shadow">Customize</a>
+    <div class="flex flex-col md:flex-row justify-between items-center p-6 bg-gradient-to-br from-purple-200 via-pink-100 to-yellow-100
+            rounded-[25px] shadow-2xl hover:scale-105 hover:shadow-pink-400/50 transition duration-300 cursor-pointer
+            backdrop-blur-sm border border-purple-300">
+  
+  <div class="flex items-center gap-6 mb-4 md:mb-0">
+    <img src="{{asset('images/5.jpeg')}}" class="w-72 h-48 object-cover rounded-xl shadow-lg hover:shadow-pink-300/50 transition duration-300" />
+    <div>
+      <h2 class="text-2xl font-extrabold text-purple-900 mb-2">Customize Your Own Package</h2>
+      <p class="text-gray-700 text-sm mb-4">Mix & match venue, services, catering and create your dream wedding experience.</p>
+      <a href="customize-wedding.html" class="inline-block px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:scale-105 hover:shadow-pink-400/60 transition">
+        Start Customizing →
+      </a>
     </div>
+  </div>
+
+</div>
+
+
 
   </div>
 
   <!-- MODAL VIEWER -->
   <div id="galleryModal" class="fixed inset-0 z-50 hidden modal flex items-center justify-center">
-    <div class="bg-white max-w-4xl w-full rounded-2xl p-4 relative">
+    <div class="bg-white/90 backdrop-blur-lg max-w-5xl w-full rounded-2xl p-6 relative shadow-2xl">
+
       <button onclick="closeGallery()" class="absolute top-3 right-4 text-lg font-bold text-gray-700 hover:text-red-600">✕</button>
       <div class="flex overflow-x-auto gap-4 p-4" id="galleryImages">
         <!-- Dynamic images will go here -->
@@ -103,7 +135,10 @@
   </div>
 
   <!-- FOOTER -->
-  <p class="mt-12 text-[11px] text-center text-gray-500">© 2025 Event Management Software</p>
+  <p class="mt-12 text-sm text-center bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent font-semibold">
+  © 2025 Event Management Software | All Rights Reserved
+</p>
+
 
   <!-- JS: Gallery Modal -->
   <script>
