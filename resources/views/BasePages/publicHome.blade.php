@@ -62,6 +62,7 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.35);
     }
 
+
     .btn-gradient {
       display: inline-block;
       padding: 0.5rem 1.5rem;
@@ -168,6 +169,8 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl w-full z-10">
   <!-- Wedding Card -->
   <div class="glass-card">
+
+
     <div class="mb-4 flex justify-center">
       <img src="{{ asset('images/wedding.png') }}" alt="Wedding Icon" class="w-16 h-16 ring-2 ring-indigo-300 hover:ring-pink-400 transition"/>
     </div>
@@ -181,8 +184,10 @@
     <div class="mb-4 flex justify-center">
       <img src="{{ asset('images/seminar.png') }}" alt="Seminar Icon" class="w-16 h-16 ring-2 ring-indigo-300 hover:ring-pink-400 transition"/>
     </div>
+
     <h2 class="text-xl font-bold text-white mb-2">Seminars</h2>
     <p class="text-gray-200 text-sm mb-4">Host professional knowledge-sharing sessions.</p>
+
     <a href="#" class="btn-gradient">Explore</a>
   </div>
 
@@ -191,6 +196,7 @@
     <div class="mb-4 flex justify-center">
       <img src="{{ asset('images/religious.png') }}" alt="Religious Icon" class="w-16 h-16 ring-2 ring-indigo-300 hover:ring-pink-400 transition"/>
     </div>
+=
     <h2 class="text-xl font-bold text-white mb-2">Religious Events</h2>
     <p class="text-gray-200 text-sm mb-4">Celebrate with spiritual grace and community.</p>
     <a href="#" class="btn-gradient">Explore</a>
@@ -198,6 +204,7 @@
 </div>
 
 <!-- Our Recent Events Section -->
+
 <h2 class="text-4xl font-bold text-white mt-16 mb-8 z-10" style="font-family: 'Playfair Display', serif;">Our Recent Events</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full z-10 mb-16">
   <div class="glass-card">

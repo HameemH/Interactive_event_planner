@@ -5,6 +5,7 @@
   <title>Wedding Packages - Event Planner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+
     /* Animated Gradient Overlay */
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -75,6 +76,8 @@
   <!-- Animated Gradient Overlay -->
   <div class="bg-animated"></div>
 
+
+
   <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-10 text-white drop-shadow-lg animate-fade-in-up">
      Wedding Packages 
   </h1>
@@ -83,6 +86,8 @@
   <div class="glass-card p-4 md:p-6 rounded-[30px] space-y-6 max-w-6xl mx-auto animate-fade-in-up">
 
     <!-- Classic -->
+
+
     <div class="flex flex-col md:flex-row justify-between items-center p-4 glass-card rounded-[20px] cursor-pointer" onclick="openGallery('classic')">
       <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6">
         <img src="images/1.jpg" class="w-full md:w-72 h-44 object-cover rounded-xl" />
@@ -92,6 +97,7 @@
           <p class="text-sm font-semibold text-yellow-600 mt-2">79,999 BDT</p>
         </div>
       </div>
+
       <button class="mt-4 md:mt-0 px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-800">Order Now</button>
     </div>
 
@@ -105,6 +111,7 @@
           <p class="text-sm font-semibold text-yellow-600 mt-2">89,999 BDT</p>
         </div>
       </div>
+
       <button class="mt-4 md:mt-0 px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-800">Order Now</button>
     </div>
 
@@ -118,6 +125,7 @@
           <p class="text-sm font-semibold text-yellow-600 mt-2">1,49,999 BDT</p>
         </div>
       </div>
+
       <button class="mt-4 md:mt-0 px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-800">Order Now</button>
     </div>
 
@@ -131,6 +139,7 @@
           <p class="text-sm font-semibold text-yellow-600 mt-2">2,99,999 BDT</p>
         </div>
       </div>
+
       <button class="mt-4 md:mt-0 px-4 py-2 glass-card rounded-full text-sm font-semibold text-gray-800">Order Now</button>
     </div>
 
@@ -146,11 +155,16 @@
       </div>
       <a href="customize-wedding.html" class="mt-4 md:mt-0 px-5 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold rounded-full shadow">Customize</a>
     </div>
+  </div>
+
+</div>
+
+
 
   </div>
 
   <!-- MODAL VIEWER -->
-  <div id="galleryModal" class="fixed inset-0 z-50 hidden modal flex items-center justify-center">
+
     <div class="glass-card max-w-4xl w-full rounded-2xl p-4 relative">
       <button onclick="closeGallery()" class="absolute top-3 right-4 text-lg font-bold text-gray-800 hover:text-red-500">✕</button>
       <div class="flex overflow-x-auto gap-4 p-4" id="galleryImages"></div>
@@ -158,6 +172,8 @@
   </div>
 
   <!-- FOOTER -->
+
+
   <p class="mt-12 text-[11px] text-center text-white drop-shadow-lg">© 2025 Event Management Software</p>
 
   <!-- JS: Gallery Modal -->
