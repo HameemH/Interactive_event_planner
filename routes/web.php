@@ -67,8 +67,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm'])->name('custom-event.xtraoptions');
     Route::post('/customize-event/xtraoptions', [EventCustomizationController::class, 'xtraOptionsForm']);
     Route::post('/customize-event/finalize', function() {
-        return redirect()->route('dashboard');
+        return redirect()->route('event.dashboard');
     })->name('custom-event.finalize');
+    
+    // Shared Event Dashboard (accessible by both organizers and guests)
+    Route::get('/event/dashboard', function() {
+        return view('events.dashboard');
+    })->name('event.dashboard');
+    
+    // Event Request Routes
+    Route::post('/event/request', [App\Http\Controllers\EventRequestController::class, 'store'])->name('event.request.store');
+    Route::get('/event/my-events', [App\Http\Controllers\EventRequestController::class, 'getUserEvents'])->name('event.my-events');
+    Route::get('/event/{event}', [App\Http\Controllers\EventRequestController::class, 'show'])->name('event.show');
+    Route::get('/event/{eventId}/details', [App\Http\Controllers\EventRequestController::class, 'getEventDetails'])->name('event.details');
 });
 
 // Routes accessible only by organizers (admins)
@@ -82,3 +93,11 @@ Route::middleware(['auth', 'role:organizer'])->prefix('admin')->name('admin.')->
 
 Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download')->middleware('auth');
 Route::get('/api/available-venues', [VenueController::class, 'availableVenues']);
+
+// Profile Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/{userId?}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/event/{eventId}/details', [App\Http\Controllers\ProfileController::class, 'showEvent'])->name('profile.event.details');
+    Route::post('/event/{eventId}/message', [App\Http\Controllers\ProfileController::class, 'sendMessage'])->name('profile.event.message');
+    Route::post('/event/{eventId}/status', [App\Http\Controllers\ProfileController::class, 'updateEventStatus'])->name('profile.event.status');
+});

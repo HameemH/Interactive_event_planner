@@ -110,4 +110,12 @@ class User extends Authenticatable
             self::ROLE_GUEST,
         ];
     }
+
+    /**
+     * Get user's events
+     */
+    public function events()
+    {
+        return $this->hasMany(\App\Models\Event::class);
+    }
 }
