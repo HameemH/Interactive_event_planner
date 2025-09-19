@@ -1,16 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - Event Planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 min-h-screen">
+@extends('layouts.app')
+
+@section('title', 'Profile - My Events')
+
+@section('content')
+<!-- ========== CUSTOM STYLES - EASILY CUSTOMIZABLE ========== -->
+<style>
+    /* Profile Page Custom Styles */
+    .profile-gradient-bg { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    }
+    .profile-card { 
+        background: rgba(255, 255, 255, 0.95); 
+        backdrop-filter: blur(10px); 
+        border-radius: 1rem; 
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
+    }
+    .profile-header-card { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        color: white; 
+    }
+    .event-status-pending { color: #d97706; background-color: #fef3c7; }
+    .event-status-approved { color: #065f46; background-color: #d1fae5; }
+    .event-status-rejected { color: #dc2626; background-color: #fee2e2; }
+    .event-status-completed { color: #1e40af; background-color: #dbeafe; }
+</style>
+<!-- ========== END CUSTOM STYLES ========== -->
+
+<div class="profile-gradient-bg min-h-screen">
+    <!-- ========== MAIN CONTENT CONTAINER - EASILY CUSTOMIZABLE ========== -->
     <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <!-- ========== PROFILE HEADER SECTION ========== -->
+        <div class="profile-card p-6 mb-8">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
@@ -29,8 +49,8 @@
             </div>
         </div>
 
-        <!-- Events Section -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
+        <!-- ========== EVENTS LIST SECTION ========== -->
+        <div class="profile-card p-6">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">
                     <i class="fas fa-calendar-alt text-indigo-600 mr-2"></i>
@@ -44,6 +64,7 @@
             @if($events->count() > 0)
                 <div class="space-y-4">
                     @foreach($events as $event)
+                        <!-- ========== INDIVIDUAL EVENT CARD ========== -->
                         <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
                             <div class="flex items-center justify-between">
                                 <div class="flex-1">
@@ -103,6 +124,7 @@
                     @endforeach
                 </div>
             @else
+                <!-- ========== NO EVENTS MESSAGE ========== -->
                 <div class="text-center py-12">
                     <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                         <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
@@ -118,7 +140,7 @@
             @endif
         </div>
 
-        <!-- Navigation -->
+        <!-- ========== NAVIGATION SECTION ========== -->
         <div class="mt-8 text-center">
             <a href="{{ route('home') }}" 
                class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
@@ -127,19 +149,17 @@
             </a>
         </div>
     </div>
+@endsection
 
-    @if(session('success'))
-        <div class="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50">
-            <i class="fas fa-check-circle mr-2"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
-            <i class="fas fa-exclamation-circle mr-2"></i>
-            {{ session('error') }}
-        </div>
-    @endif
-</body>
-</html>
+<!-- ========== CUSTOM JAVASCRIPT ========== -->
+@push('scripts')
+<script>
+    // Auto-hide success/error messages after 5 seconds
+    setTimeout(function() {
+        const successMsg = document.querySelector('.fixed.bg-green-100');
+        const errorMsg = document.querySelector('.fixed.bg-red-100');
+        if (successMsg) successMsg.style.display = 'none';
+        if (errorMsg) errorMsg.style.display = 'none';
+    }, 5000);
+</script>
+@endpush

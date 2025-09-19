@@ -128,7 +128,7 @@ class LoginController extends Controller
             return '/admin/dashboard'; // Organizers go to admin dashboard
         }
         
-        return '/dashboard'; // Guests go to regular dashboard
+        return route('profile.show', Auth::id()); // Guests go to their profile
     }
 
     /**
