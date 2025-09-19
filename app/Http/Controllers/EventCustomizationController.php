@@ -60,6 +60,101 @@ class EventCustomizationController extends Controller
         return view('custom-event.xtraoptions');
     }
 
+    // Public methods for guest users (no authentication required)
+    public function publicIndex()
+    {
+        return view('custom-event.public-index');
+    }
+
+    public function publicVenueForm(Request $request)
+    {
+        // Handle venue form for guests - store in session without authentication
+        if ($request->isMethod('post')) {
+            Session::put('guest_venue', $request->all());
+        }
+        return view('custom-event.public-venue');
+    }
+
+    public function publicSeatingForm(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            Session::put('guest_seating', $request->all());
+        }
+        return view('custom-event.public-seating');
+    }
+
+    public function publicStageForm(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            Session::put('guest_stage', $request->all());
+        }
+        return view('custom-event.public-stage');
+    }
+
+    public function publicCateringForm(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            Session::put('guest_catering', $request->all());
+        }
+        return view('custom-event.public-catering');
+    }
+
+    public function publicPhotographyForm(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            Session::put('guest_photography', $request->all());
+        }
+        return view('custom-event.public-photography');
+    }
+
+    public function publicXtraOptionsForm(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            Session::put('guest_xtraoptions', $request->all());
+        }
+        return view('custom-event.public-xtraoptions');
+    }
+
+    public function publicDashboard()
+    {
+        // Public dashboard that shows localStorage-based customizations
+        // Only requires login for final event submission
+        return view('events.public-dashboard');
+    }
+
+    public function finalizeEvent(Request $request)
+    {
+        // This method requires authentication - user must be logged in to finalize
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('message', 'Please log in to finalize your event request.');
+        }
+
+        // Get all guest session data and convert to authenticated user data
+        $guestData = [];
+        $guestKeys = ['guest_venue', 'guest_seating', 'guest_stage', 'guest_catering', 'guest_photography', 'guest_xtraoptions'];
+        
+        foreach ($guestKeys as $key) {
+            if (Session::has($key)) {
+                $guestData[$key] = Session::get($key);
+            }
+        }
+
+        // Store event data to database logic goes here
+        $event = new Event();
+        $event->user_id = Auth::id();
+        $event->category = $request->input('category', 'custom');
+        $event->total_cost = $request->input('total_cost', 0);
+        $event->event_data = json_encode($guestData); // Store customization data as JSON
+        $event->save();
+
+        // Clear guest session data
+        foreach ($guestKeys as $key) {
+            Session::forget($key);
+        }
+
+        return redirect()->route('profile.show', Auth::id())->with('success', 'Your event request has been submitted successfully!');
+    }
+
     public function store(Request $request)
     {
 
