@@ -108,6 +108,12 @@ Route::middleware(['auth', 'role:organizer'])->prefix('admin')->name('admin.')->
     Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'users'])->name('users');
     Route::post('/users/{user}/promote', [App\Http\Controllers\Admin\AdminController::class, 'promoteUser'])->name('users.promote');
     Route::post('/users/{user}/demote', [App\Http\Controllers\Admin\AdminController::class, 'demoteUser'])->name('users.demote');
+    
+    // Event management routes
+    Route::get('/events', [App\Http\Controllers\Admin\AdminController::class, 'events'])->name('events');
+    Route::get('/events/{event}', [App\Http\Controllers\Admin\AdminController::class, 'showEvent'])->name('events.show');
+    Route::post('/events/{event}/status', [App\Http\Controllers\Admin\AdminController::class, 'updateEventStatus'])->name('events.status');
+    Route::post('/events/{event}/pricing', [App\Http\Controllers\Admin\AdminController::class, 'updateEventPricing'])->name('events.pricing');
 });
 
 

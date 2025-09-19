@@ -79,12 +79,14 @@
 
         <!-- Navigation & Auth Links -->
         <div class="flex items-center space-x-4">
-            <!-- Customize Event Button - Conditional based on auth status -->
+            <!-- Customize Event Button - Hidden for admins -->
             @auth
-                <a href="{{ route('custom-event.index') }}" class="tech-button">
-                    <i class="fas fa-paint-brush mr-2"></i>
-                    Customize Event
-                </a>
+                @if(!Auth::user()->isOrganizer())
+                    <a href="{{ route('custom-event.index') }}" class="tech-button">
+                        <i class="fas fa-paint-brush mr-2"></i>
+                        Customize Event
+                    </a>
+                @endif
             @else
                 <a href="{{ route('customize.event') }}" class="tech-button">
                     <i class="fas fa-paint-brush mr-2"></i>
