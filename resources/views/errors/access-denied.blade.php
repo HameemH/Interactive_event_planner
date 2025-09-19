@@ -44,8 +44,8 @@
                         Go to Admin Dashboard
                     </a>
                 @else
-                    <a href="{{ route('dashboard') }}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
-                        Go to Dashboard
+                    <a href="{{ route('profile.show', Auth::id()) }}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Go to My Profile
                     </a>
                 @endif
                 

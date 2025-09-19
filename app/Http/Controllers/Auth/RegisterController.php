@@ -31,6 +31,14 @@ class RegisterController extends Controller
     protected $redirectTo = '/dashboard';
 
     /**
+     * Get the post-registration redirect path.
+     */
+    protected function redirectTo()
+    {
+        return route('profile.show', auth()->id());
+    }
+
+    /**
      * Create a new controller instance.
      *
      * @return void

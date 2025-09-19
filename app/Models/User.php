@@ -118,4 +118,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Event::class);
     }
+
+    /**
+     * Get user's messages
+     */
+    public function userMessages()
+    {
+        return $this->hasOne(\App\Models\UserMessage::class);
+    }
 }

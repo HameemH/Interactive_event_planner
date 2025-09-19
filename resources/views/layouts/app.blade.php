@@ -89,7 +89,7 @@
                 @if(Auth::user()->isOrganizer())
                     <a href="{{ route('admin.dashboard') }}" class="tech-button">Admin Panel</a>
                 @endif
-                <a href="{{ route('dashboard') }}" class="tech-button">Dashboard</a>
+                <a href="{{ route('profile.show', Auth::id()) }}" class="tech-button">My Profile</a>
                 <div class="relative inline-block text-left" x-data="{ open: false }">
                     <button type="button" class="inline-flex items-center px-4 py-2 text-white font-semibold tech-button focus:outline-none" @click="open = !open">
                         {{ Auth::user()->name }}
@@ -101,7 +101,7 @@
                     <div x-show="open" @click.away="open = false" x-transition 
                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
                          style="display: none;">
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                        <a href="{{ route('profile.show', Auth::id()) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

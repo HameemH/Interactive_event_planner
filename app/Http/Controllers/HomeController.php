@@ -17,12 +17,13 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the application dashboard - redirect to user profile.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
     {
-        return view('home');
+        // Redirect users to their profile instead of a basic dashboard
+        return redirect()->route('profile.show', auth()->id());
     }
 }

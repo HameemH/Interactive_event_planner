@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\UserMessage;
 
 class ProfileController extends Controller
 {
@@ -44,7 +45,10 @@ class ProfileController extends Controller
         $event = Event::with(['venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions', 'user'])
                      ->findOrFail($eventId);
 
-        return view('profile.event-details', compact('event'));
+        // Get user messages for this user
+        $userMessages = UserMessage::where('user_id', $event->user_id)->first();
+
+        return view('profile.event-details', compact('event', 'userMessages'));
     }
 
     /**
@@ -64,15 +68,39 @@ class ProfileController extends Controller
     }
 
     /**
-     * Send message about event (placeholder for future implementation)
+     * Send module-specific message about event
      */
     public function sendMessage(Request $request, $eventId)
     {
         $request->validate([
-            'message' => 'required|string|max:1000'
+            'message' => 'required|string|max:1000',
+            'module' => 'required|string|in:venue,seating,stage,catering,photography,extra_options'
         ]);
 
-        // For now, just return success - can be extended to save messages to database
-        return back()->with('success', 'Message sent successfully');
+        $event = Event::findOrFail($eventId);
+        
+        // Check if user owns this event
+        if ($event->user_id !== auth()->id()) {
+            return back()->with('error', 'Unauthorized access');
+        }
+
+        // Find or create user message record
+        $userMessage = UserMessage::firstOrCreate(['user_id' => auth()->id()]);
+        
+        // Update the specific module message
+        $moduleField = $request->module . '_message';
+        $userMessage->$moduleField = $request->message;
+        $userMessage->save();
+
+        $moduleNames = [
+            'venue' => 'Venue',
+            'seating' => 'Seating',
+            'stage' => 'Stage',
+            'catering' => 'Catering',
+            'photography' => 'Photography',
+            'extra_options' => 'Extra Options'
+        ];
+
+        return back()->with('success', $moduleNames[$request->module] . ' message sent successfully');
     }
 }
