@@ -136,7 +136,7 @@
     </a>
     <div class="flex items-center space-x-4">
         <a href="/" class="tech-button">Home</a>
-        <a href="/customize-event" class="tech-button">Customize Event</a>
+        <a href="{{ route('customize.event') }}" class="tech-button">Customize Event</a>
         <a href="/login" class="tech-button">Login</a>
         <a href="/register" class="tech-button">Register</a>
     </div>

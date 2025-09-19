@@ -47,6 +47,26 @@ Route::post('/dashboard/message', [DashboardController::class, 'message'])
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// Public Event Customization Routes (no auth required for browsing)
+Route::get('/customize', [EventCustomizationController::class, 'publicIndex'])->name('customize.event');
+Route::get('/customize/venue', [EventCustomizationController::class, 'publicVenueForm'])->name('customize.venue');
+Route::post('/customize/venue', [EventCustomizationController::class, 'publicVenueForm']);
+Route::get('/customize/seating', [EventCustomizationController::class, 'publicSeatingForm'])->name('customize.seating');
+Route::post('/customize/seating', [EventCustomizationController::class, 'publicSeatingForm']);
+Route::get('/customize/stage', [EventCustomizationController::class, 'publicStageForm'])->name('customize.stage');
+Route::post('/customize/stage', [EventCustomizationController::class, 'publicStageForm']);
+Route::get('/customize/catering', [EventCustomizationController::class, 'publicCateringForm'])->name('customize.catering');
+Route::post('/customize/catering', [EventCustomizationController::class, 'publicCateringForm']);
+Route::get('/customize/photography', [EventCustomizationController::class, 'publicPhotographyForm'])->name('customize.photography');
+Route::post('/customize/photography', [EventCustomizationController::class, 'publicPhotographyForm']);
+Route::get('/customize/xtraoptions', [EventCustomizationController::class, 'publicXtraOptionsForm'])->name('customize.xtraoptions');
+Route::post('/customize/xtraoptions', [EventCustomizationController::class, 'publicXtraOptionsForm']);
+Route::get('/customize/dashboard', [EventCustomizationController::class, 'publicDashboard'])->name('customize.dashboard');
+Route::get('/public-receipt', [ReceiptController::class, 'download'])->name('public.receipt.download');
+
+// Finalization requires authentication
+Route::post('/customize/finalize', [EventCustomizationController::class, 'finalizeEvent'])->name('customize.finalize')->middleware('auth');
+
 // Access denied route
 Route::get('/access-denied', function () {
     return view('errors.access-denied');

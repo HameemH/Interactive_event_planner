@@ -81,6 +81,16 @@ class LoginController extends Controller
 
             $this->clearLoginAttempts($request);
 
+            // Check for return_to parameter for custom redirect
+            if ($request->has('return_to')) {
+                $returnTo = $request->input('return_to');
+                // Validate the return URL is internal and safe
+                if (filter_var($returnTo, FILTER_VALIDATE_URL) && 
+                    str_starts_with($returnTo, url('/'))) {
+                    return redirect($returnTo);
+                }
+            }
+
             return $this->sendLoginResponse($request);
         }
 
@@ -124,6 +134,17 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
+        // Check if user came from public customization flow
+        $intendedUrl = session('url.intended');
+        $referrer = request()->headers->get('referer');
+        
+        // If they were on customize dashboard or came from public customization, redirect to authenticated event dashboard
+        if (($intendedUrl && str_contains($intendedUrl, 'customize/dashboard')) ||
+            ($referrer && str_contains($referrer, 'customize/dashboard'))) {
+            return route('event.dashboard');
+        }
+        
+        // Default role-based redirects
         if (Auth::user()->isOrganizer()) {
             return '/admin/dashboard'; // Organizers go to admin dashboard
         }

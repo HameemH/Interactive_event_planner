@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     @yield('scripts')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,8 +77,21 @@
             <span class="text-3xl font-extrabold logo-text animate-gradient-text">Momento</span>
         </a>
 
-        <!-- Auth Links -->
+        <!-- Navigation & Auth Links -->
         <div class="flex items-center space-x-4">
+            <!-- Customize Event Button - Conditional based on auth status -->
+            @auth
+                <a href="{{ route('custom-event.index') }}" class="tech-button">
+                    <i class="fas fa-paint-brush mr-2"></i>
+                    Customize Event
+                </a>
+            @else
+                <a href="{{ route('customize.event') }}" class="tech-button">
+                    <i class="fas fa-paint-brush mr-2"></i>
+                    Customize Event
+                </a>
+            @endauth
+            
             @guest
                 @if (Route::has('login'))
                     <a href="{{ route('login') }}" class="tech-button">Login</a>

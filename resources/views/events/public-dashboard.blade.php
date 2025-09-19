@@ -69,10 +69,10 @@
       </span>
     </h1>
 
-    <!-- User Role Badge -->
+    <!-- Public User Badge -->
     <div class="mb-4 text-center">
-      <span class="px-4 py-2 rounded-full text-sm font-semibold {{ Auth::user()->isOrganizer() ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
-        {{ Auth::user()->isOrganizer() ? 'Organizer View' : 'Guest View' }}
+      <span class="px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">
+        Public Preview Mode
       </span>
     </div>
 
@@ -125,43 +125,29 @@
 
     <!-- Buttons -->
     <div class="mt-8 flex justify-between items-center">
-      @if(Auth::user()->isOrganizer())
-        <!-- Organizer Actions -->
-        <a href="{{ route('admin.dashboard') }}" class="px-6 py-3 bg-red-500/70 text-white rounded-full font-semibold hover:bg-red-600/80 transition">
-          🔧 Admin Panel
-        </a>
-      @else
-        <!-- Guest Actions -->
-        <a href="{{ route('custom-event.index') }}" class="px-6 py-3 bg-gray-300/70 rounded-full font-semibold hover:bg-gray-400/80 transition">
-          ⬅ Start Over
-        </a>
-      @endif
+      <!-- Start Over -->
+      <a href="{{ route('customize.event') }}" class="px-6 py-3 bg-gray-300/70 rounded-full font-semibold hover:bg-gray-400/80 transition">
+        ⬅ Start Over
+      </a>
       
+      <!-- Download Receipt -->
       <button id="download-receipt" class="px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition">
         📄 Download Receipt
       </button>
       
-      @if(Auth::user()->isGuest())
-        <button id="request-approval-btn" class="px-6 py-3 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:shadow-xl transition transform duration-200 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          � Request Approval
-        </button>
-      @else
-        <button id="approve-btn" class="px-6 py-3 bg-green-600 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:shadow-xl transition transform duration-200 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          ✅ Approve Event
-        </button>
-      @endif
+      <!-- Submit Event Request (Login Required) -->
+      <button id="request-approval-btn" class="px-6 py-3 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:shadow-xl transition transform duration-200 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        🔒 Submit Event Request
+      </button>
     </div>
 
     <!-- Ready to Submit Section -->
     <div class="mt-6 p-4 bg-white/20 backdrop-blur-lg rounded-xl">
       <h3 class="text-lg font-semibold mb-2">Event Planning Complete</h3>
-      <p class="text-sm text-gray-600">All event details have been configured. Ready to submit your request!</p>
+      <p class="text-sm text-gray-600">All event details have been configured. Login required to submit your request!</p>
     </div>
   </div>
 </div>
@@ -171,16 +157,7 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('Dashboard script loaded'); // Debug line
-  
-  // Check if user came from public customization flow
-  const fromPublicCustomization = localStorage.getItem('from_public_customization');
-  if (fromPublicCustomization === 'true') {
-    // Clear the flag
-    localStorage.removeItem('from_public_customization');
-    // Show welcome message
-    showSuccessPopup('Welcome Back!', 'Your customizations have been preserved. You can now submit your event request.');
-  }
+  console.log('Public Dashboard script loaded'); // Debug line
   
   // Fetch data from localStorage with default cost values
   function getData(key, defaults) {
@@ -270,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Photography
   console.log('Processing photography data:', photography); // Debug line
-  if (photography.photography_required || photography.package || photography.cost || photography.package_type) {
+  if (photography.photographer_needed || photography.package || photography.cost || photography.package_type) {
     let photoText = '';
     if (photography.package || photography.package_type) {
       photoText = `Package: ${photography.package || photography.package_type} | Hours: ${photography.num_hours || photography.hours || 'N/A'} | Cost: ৳${photography.cost || photography.photography_cost || 0}`;
@@ -300,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Show total
   console.log('Final calculated total:', total); // Debug line
   document.getElementById('total-estimated-cost').innerText = `Total Estimated Price: ৳${total}`;
-  console.log('Dashboard data loading completed'); // Debug line
+  console.log('Public Dashboard data loading completed'); // Debug line
 
   // Add test data button for debugging (remove in production)
   if (total === 0) {
@@ -337,220 +314,32 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     
     console.log('Download receipt clicked, event data:', eventData); // Debug line
-    window.location.href = `/download-receipt?event_data=${encodeURIComponent(JSON.stringify(eventData))}`;
+    window.location.href = `/public-receipt?event_data=${encodeURIComponent(JSON.stringify(eventData))}`;
   });
 
-  // Guest Request Approval button
+  // Submit Event Request button (requires login)
   const requestBtn = document.getElementById('request-approval-btn');
   if (requestBtn) {
     requestBtn.addEventListener('click', function () {
-      showRequestApprovalForm();
-    });
-  }
-
-  // Organizer Approve button
-  const approveBtn = document.getElementById('approve-btn');
-  if (approveBtn) {
-    approveBtn.addEventListener('click', function () {
-      showSuccessPopup('Event Approved!', 'This event has been approved and the client will be notified.');
+      // Check if user has customization data
+      if (total === 0) {
+        alert('Please complete your event customization first!');
+        window.location.href = '{{ route("customize.event") }}';
+        return;
+      }
+      
+      // Show login requirement message and redirect to login
+      const shouldProceed = confirm('Login is required to submit your event request. Your customizations will be saved. Would you like to continue to login?');
+      if (shouldProceed) {
+        // Store intended redirect to authenticated event dashboard  
+        localStorage.setItem('redirect_after_login', '{{ route("event.dashboard") }}');
+        // Store flag to indicate coming from public customization
+        localStorage.setItem('from_public_customization', 'true');
+        // Redirect to login with return URL
+        window.location.href = '{{ route("login") }}?return_to=' + encodeURIComponent('{{ route("event.dashboard") }}');
+      }
     });
   }
 });
-
-function showSuccessPopup(title, message) {
-  const popup = document.createElement('div');
-  popup.style.position = 'fixed';
-  popup.style.top = '0';
-  popup.style.left = '0';
-  popup.style.width = '100vw';
-  popup.style.height = '100vh';
-  popup.style.background = 'rgba(0,0,0,0.3)';
-  popup.style.display = 'flex';
-  popup.style.alignItems = 'center';
-  popup.style.justifyContent = 'center';
-  popup.style.zIndex = '9999';
-  popup.innerHTML = `
-    <div style="background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);padding:40px 32px;border-radius:18px;min-width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(99,102,241,0.15);text-align:center;">
-      <h2 style='font-size:2rem;font-weight:700;color:#4f46e5;margin-bottom:16px;'>${title}</h2>
-      <p style='font-size:1.1rem;color:#374151;margin-bottom:18px;'>${message}</p>
-      <button onclick="document.body.removeChild(this.closest('.popup-bg'))" style="background:#4f46e5;color:#fff;padding:10px 28px;border-radius:10px;font-weight:600;border:none;font-size:1rem;">Close</button>
-    </div>
-  `;
-  popup.className = 'popup-bg';
-  document.body.appendChild(popup);
-}
-
-function showRequestApprovalForm() {
-  const popup = document.createElement('div');
-  popup.style.position = 'fixed';
-  popup.style.top = '0';
-  popup.style.left = '0';
-  popup.style.width = '100vw';
-  popup.style.height = '100vh';
-  popup.style.background = 'rgba(0,0,0,0.3)';
-  popup.style.display = 'flex';
-  popup.style.alignItems = 'center';
-  popup.style.justifyContent = 'center';
-  popup.style.zIndex = '9999';
-  
-  // Get event date and calculate total from localStorage
-  const eventVenue = JSON.parse(localStorage.getItem('event_venue') || '{}');
-  const eventSeating = JSON.parse(localStorage.getItem('event_seating') || '{}');
-  const eventStage = JSON.parse(localStorage.getItem('event_stage') || '{}');
-  const eventCatering = JSON.parse(localStorage.getItem('event_catering') || '{}');
-  const eventPhotography = JSON.parse(localStorage.getItem('event_photography') || '{}');
-  const eventExtra = JSON.parse(localStorage.getItem('event_extra') || '{}');
-  
-  const storedEventDate = eventVenue.date || '';
-  
-  // Calculate total cost
-  let popupTotal = 0;
-  popupTotal += Number(eventVenue.cost) || 0;
-  popupTotal += Number(eventSeating.cost) || 0;
-  popupTotal += Number(eventStage.cost) || 0;
-  popupTotal += Number(eventCatering.cost || eventCatering.total_catering_cost) || 0;
-  popupTotal += Number(eventPhotography.cost || eventPhotography.photography_cost) || 0;
-  popupTotal += Number(eventExtra.cost) || 0;
-  
-  popup.innerHTML = `
-    <div style="background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);padding:32px;border-radius:18px;min-width:400px;max-width:90vw;box-shadow:0 8px 32px rgba(99,102,241,0.15);">
-      <h2 style='font-size:1.5rem;font-weight:700;color:#4f46e5;margin-bottom:24px;text-align:center;'>Submit Event Request</h2>
-      
-      <form id="request-form">
-        <div style="margin-bottom:20px;">
-          <label style="display:block;font-weight:600;margin-bottom:8px;color:#374151;">Event Name</label>
-          <input type="text" id="event-name" required placeholder="Enter your event name" style="width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:8px;font-size:16px;">
-        </div>
-        
-        <div style="margin-bottom:20px;">
-          <label style="display:block;font-weight:600;margin-bottom:8px;color:#374151;">Event Category</label>
-          <select id="event-category" required style="width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:8px;font-size:16px;">
-            <option value="">Select Category</option>
-            <option value="wedding">Wedding</option>
-            <option value="seminar">Seminar</option>
-            <option value="religious">Religious</option>
-            <option value="corporate">Corporate</option>
-          </select>
-        </div>
-        
-        <div style="margin-bottom:20px;padding:16px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-            <span style="font-weight:600;color:#374151;">Event Date:</span>
-            <span style="color:#6b7280;">${storedEventDate || 'Not selected'}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span style="font-weight:600;color:#374151;">Total Cost:</span>
-            <span style="color:#059669;font-weight:600;">৳<span id="form-total-cost">${popupTotal}</span></span>
-          </div>
-        </div>
-        
-        <div style="display:flex;justify-content:flex-end;gap:12px;">
-          <button type="button" onclick="document.body.removeChild(this.closest('.popup-bg'))" style="background:#e5e7eb;color:#374151;padding:12px 24px;border-radius:8px;font-weight:500;border:none;cursor:pointer;">Cancel</button>
-          <button type="submit" style="background:#4f46e5;color:#fff;padding:12px 24px;border-radius:8px;font-weight:500;border:none;cursor:pointer;">Submit Request</button>
-        </div>
-      </form>
-      
-      <div id="form-status" style="margin-top:16px;text-align:center;"></div>
-    </div>
-  `;
-  
-  popup.className = 'popup-bg';
-  document.body.appendChild(popup);
-  
-  // Handle form submission
-  document.getElementById('request-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    submitEventRequest();
-  });
-}
-
-function submitEventRequest() {
-  const eventName = document.getElementById('event-name').value;
-  const eventCategory = document.getElementById('event-category').value;
-  const statusDiv = document.getElementById('form-status');
-  
-  // Get event date from localStorage (saved from venue selection)
-  const eventVenue = JSON.parse(localStorage.getItem('event_venue') || '{}');
-  const eventDate = eventVenue.date;
-  
-  if (!eventName || !eventCategory) {
-    statusDiv.innerHTML = '<p style="color:#dc2626;">Please fill in all required fields.</p>';
-    return;
-  }
-  
-  if (!eventDate) {
-    statusDiv.innerHTML = '<p style="color:#dc2626;">Event date not found. Please complete venue selection first.</p>';
-    return;
-  }
-  
-  statusDiv.innerHTML = '<p style="color:#3b82f6;">Submitting request...</p>';
-  
-  // Collect all localStorage data for comprehensive event details
-  // Note: eventVenue already declared above, reuse it
-  const eventSeating = JSON.parse(localStorage.getItem('event_seating') || 'null');
-  const eventStage = JSON.parse(localStorage.getItem('event_stage') || 'null');
-  const eventCatering = JSON.parse(localStorage.getItem('event_catering') || 'null');
-  const eventPhotography = JSON.parse(localStorage.getItem('event_photography') || 'null');
-  const eventExtra = JSON.parse(localStorage.getItem('event_extra') || 'null');
-  
-  // Calculate total cost from localStorage data
-  let submitTotal = 0;
-  if (eventVenue) submitTotal += Number(eventVenue.cost) || 0;
-  if (eventSeating) submitTotal += Number(eventSeating.cost) || 0;
-  if (eventStage) submitTotal += Number(eventStage.cost) || 0;
-  if (eventCatering) submitTotal += Number(eventCatering.cost || eventCatering.total_catering_cost) || 0;
-  if (eventPhotography) submitTotal += Number(eventPhotography.cost || eventPhotography.photography_cost) || 0;
-  if (eventExtra) submitTotal += Number(eventExtra.cost) || 0;
-  
-  // Submit to backend with all event component data
-  fetch('{{ route("event.request.store") }}', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    },
-    body: JSON.stringify({
-      event_name: eventName,
-      event_date: eventDate,
-      category: eventCategory,
-      total_cost: submitTotal,
-      // Include all localStorage event component data
-      event_venue: eventVenue,
-      event_seating: eventSeating,
-      event_stage: eventStage,
-      event_catering: eventCatering,
-      event_photography: eventPhotography,
-      event_extra: eventExtra
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      statusDiv.innerHTML = '<p style="color:#16a34a;">✅ ' + data.message + '</p>';
-      setTimeout(() => {
-        document.body.removeChild(document.querySelector('.popup-bg'));
-        // Clear localStorage after successful submission
-        localStorage.removeItem('event_venue');
-        localStorage.removeItem('event_seating');
-        localStorage.removeItem('event_stage');
-        localStorage.removeItem('event_catering');
-        localStorage.removeItem('event_photography');
-        localStorage.removeItem('event_extra');
-        // Redirect to user profile
-        if (data.redirect_url) {
-          window.location.href = data.redirect_url;
-        } else {
-          window.location.href = '{{ route("dashboard") }}';
-        }
-      }, 2000);
-    } else {
-      statusDiv.innerHTML = '<p style="color:#dc2626;">❌ ' + data.message + '</p>';
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    statusDiv.innerHTML = '<p style="color:#dc2626;">❌ Network error. Please try again.</p>';
-  });
-}
 </script>
 @endsection
