@@ -405,14 +405,24 @@
                         Quick Actions
                     </h3>
                     <div class="space-y-3">
-                        <button onclick="openPaymentModal('full_event', {{ $event->total_cost }})" 
-                                class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
-                            <i class="fas fa-credit-card mr-2"></i>
-                            Pay Full Amount (৳{{ number_format($event->total_cost, 2) }})
-                        </button>
-                        <div class="text-xs text-gray-500 text-center">
-                            <p>Payment integration coming soon</p>
-                        </div>
+                        @if($event->isApproved())
+                            <button onclick="openPaymentModal('full_event', {{ $event->total_cost }})" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
+                                <i class="fas fa-credit-card mr-2"></i>
+                                Pay Full Amount (৳{{ number_format($event->total_cost, 2) }})
+                            </button>
+                            <div class="text-xs text-gray-500 text-center">
+                                <p>Payment integration coming soon</p>
+                            </div>
+                        @else
+                            <div class="w-full bg-gray-300 text-gray-600 py-3 px-4 rounded-lg font-medium cursor-not-allowed">
+                                <i class="fas fa-lock mr-2"></i>
+                                Payment Locked - Event Pending Approval
+                            </div>
+                            <div class="text-xs text-red-500 text-center">
+                                <p><i class="fas fa-info-circle mr-1"></i>Payment will be available once your event is approved by an admin</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -530,39 +540,40 @@
 <!-- ========== CUSTOM JAVASCRIPT FOR EVENT DETAILS ========== -->
 @push('scripts')
 <script>
-    // Module name mappings for display
-    const moduleNames = {
-        'venue': 'Venue',
-        'seating': 'Seating',
-        'stage': 'Stage',
-        'catering': 'Catering',
-        'photography': 'Photography',
-        'extra_options': 'Extra Options',
-        'full_event': 'Full Event'
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+        // Module name mappings for display
+        const moduleNames = {
+            'venue': 'Venue',
+            'seating': 'Seating',
+            'stage': 'Stage',
+            'catering': 'Catering',
+            'photography': 'Photography',
+            'extra_options': 'Extra Options',
+            'full_event': 'Full Event'
+        };
 
-    // Message Modal Functions
-    function openMessageModal(module) {
-        document.getElementById('messageModule').value = module;
-        document.getElementById('moduleNameDisplay').textContent = moduleNames[module];
-        document.getElementById('messageModal').classList.remove('hidden');
-    }
+        // Make functions globally available
+        window.openMessageModal = function(module) {
+            document.getElementById('messageModule').value = module;
+            document.getElementById('moduleNameDisplay').textContent = moduleNames[module];
+            document.getElementById('messageModal').classList.remove('hidden');
+        };
 
-    function closeMessageModal() {
-        document.getElementById('messageModal').classList.add('hidden');
-        document.getElementById('messageText').value = '';
-    }
+        window.closeMessageModal = function() {
+            document.getElementById('messageModal').classList.add('hidden');
+            document.getElementById('messageText').value = '';
+        };
 
-    // Payment Modal Functions
-    function openPaymentModal(module, amount) {
-        document.getElementById('paymentModuleDisplay').textContent = moduleNames[module];
-        document.getElementById('paymentAmount').textContent = new Intl.NumberFormat().format(amount);
-        document.getElementById('paymentModal').classList.remove('hidden');
-    }
+        // Payment Modal Functions
+        window.openPaymentModal = function(module, amount) {
+            document.getElementById('paymentModuleDisplay').textContent = moduleNames[module];
+            document.getElementById('paymentAmount').textContent = new Intl.NumberFormat().format(amount);
+            document.getElementById('paymentModal').classList.remove('hidden');
+        };
 
-    function closePaymentModal() {
-        document.getElementById('paymentModal').classList.add('hidden');
-    }
+        window.closePaymentModal = function() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        };
 
     // Close modals when clicking outside
     document.getElementById('messageModal').addEventListener('click', function(e) {
@@ -577,12 +588,13 @@
         }
     });
 
-    // Auto-hide success/error messages after 5 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert-dismissible');
-        alerts.forEach(alert => {
-            alert.style.display = 'none';
-        });
-    }, 5000);
+        // Auto-hide success/error messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(alert => {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+    }); // Close DOMContentLoaded
 </script>
 @endpush

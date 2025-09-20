@@ -118,7 +118,7 @@ class AdminController extends Controller
             return redirect()->route('access.denied')->with('error', 'Access denied.');
         }
 
-        $event->load(['user', 'venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions']);
+        $event->load(['user.userMessages', 'venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions']);
         return view('admin.event-details', compact('event'));
     }
 

@@ -70,12 +70,25 @@
         </div>
 
         <!-- Pricing Management Form -->
+        @if($event->isApproved())
         <div class="bg-blue-50 p-6 rounded-lg mb-8">
             <h3 class="text-lg font-semibold mb-4">
                 <i class="fas fa-dollar-sign mr-2"></i>
                 Update Event Pricing
             </h3>
             <form method="POST" action="{{ route('admin.events.pricing', $event) }}">
+        @else
+        <div class="bg-gray-100 p-6 rounded-lg mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-600">
+                <i class="fas fa-lock mr-2"></i>
+                Event Pricing (Locked)
+            </h3>
+            <p class="text-gray-600 mb-4">
+                <i class="fas fa-info-circle mr-2"></i>
+                Pricing can only be updated after the event is approved.
+            </p>
+            <div class="opacity-50 pointer-events-none">
+        @endif
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @if($event->venue)
@@ -134,11 +147,17 @@
                 </div>
                 
                 <div class="mt-4">
-                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
-                        <i class="fas fa-save mr-2"></i>Update Pricing
-                    </button>
+                    @if($event->isApproved())
+                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">
+                            <i class="fas fa-save mr-2"></i>Update Pricing
+                        </button>
+                    @endif
                 </div>
-            </form>
+                @if($event->isApproved())
+                    </form>
+                @else
+                    </div>
+                @endif
         </div>
 
         <!-- Event Components Details -->
@@ -154,6 +173,12 @@
                         <p><strong>Size:</strong> {{ $event->venue->venue_size ?? 'N/A' }} sqm</p>
                         <p><strong>Address:</strong> {{ $event->venue->venue_address ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->venue->venue_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->venue_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->venue_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -169,6 +194,12 @@
                         <p><strong>Chair Type:</strong> {{ $event->seating->chair_type ?? 'N/A' }}</p>
                         <p><strong>Table Type:</strong> {{ $event->seating->table_type ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->seating->seating_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->seating_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->seating_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -183,6 +214,12 @@
                         <p><strong>Stage Type:</strong> {{ $event->stage->stage_type ?? 'N/A' }}</p>
                         <p><strong>Decoration:</strong> {{ $event->stage->surrounding_decoration ? 'Yes' : 'No' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->stage->stage_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->stage_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->stage_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -198,6 +235,12 @@
                         <p><strong>Guests:</strong> {{ $event->catering->total_guests ?? 'N/A' }}</p>
                         <p><strong>Per Person:</strong> ৳{{ number_format($event->catering->per_person_cost ?? 0, 2) }}</p>
                         <p><strong>Total Cost:</strong> ৳{{ number_format($event->catering->total_catering_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->catering_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->catering_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -213,6 +256,12 @@
                         <p><strong>Photographers:</strong> {{ $event->photography->num_photographers ?? 'N/A' }}</p>
                         <p><strong>Hours:</strong> {{ $event->photography->num_hours ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->photography->photography_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->photography_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->photography_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -239,6 +288,12 @@
                             <p>No extra options selected</p>
                         @endif
                         <p><strong>Cost:</strong> ৳{{ number_format($event->extraOptions->extra_options_cost ?? 0, 2) }}</p>
+                        @if($event->user->userMessages && $event->user->userMessages->extra_options_message)
+                            <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-xs text-gray-600 font-semibold">User Message:</p>
+                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->extra_options_message }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
