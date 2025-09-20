@@ -15,7 +15,8 @@ class Event extends Model
         'event_name',
         'event_date',
         'total_cost',
-        'status'
+        'status',
+        'payment_status'
     ];
 
     protected $casts = [
@@ -147,5 +148,29 @@ class Event extends Model
     public function getFormattedStatusAttribute()
     {
         return ucfirst($this->status);
+    }
+
+    /**
+     * Get the payments for this event
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Check if event is paid
+     */
+    public function isPaid()
+    {
+        return $this->payment_status === 'paid';
+    }
+
+    /**
+     * Check if event is unpaid
+     */
+    public function isUnpaid()
+    {
+        return $this->payment_status === 'unpaid';
     }
 }

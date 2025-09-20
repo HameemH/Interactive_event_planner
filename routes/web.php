@@ -120,6 +120,25 @@ Route::middleware(['auth', 'role:organizer'])->prefix('admin')->name('admin.')->
 Route::get('/download-receipt', [ReceiptController::class, 'download'])->name('receipt.download')->middleware('auth');
 Route::get('/api/available-venues', [VenueController::class, 'availableVenues']);
 
+// Payment Routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/payment/create-intent/{event}', [App\Http\Controllers\PaymentController::class, 'createPaymentIntent'])->name('payment.create-intent');
+    Route::get('/payment/confirm/{event}', [App\Http\Controllers\PaymentController::class, 'confirmPayment'])->name('payment.confirm');
+});
+
+// Test route for payment confirmation (remove after testing)
+Route::get('/payment/test/{event}', function($eventId) {
+    return response()->json([
+        'message' => 'Payment confirmation endpoint is working',
+        'event_id' => $eventId,
+        'url' => request()->fullUrl(),
+        'server' => request()->server('HTTP_HOST')
+    ]);
+});
+
+// Stripe Webhook (no auth required)
+Route::post('/stripe/webhook', [App\Http\Controllers\PaymentController::class, 'webhook'])->name('stripe.webhook');
+
 // Profile Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile/{userId?}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');

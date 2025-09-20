@@ -44,6 +44,85 @@
             transform: translateY(0);
         }
     }
+    
+    /* Hide Stripe billing details fields but keep payment form */
+    #payment-element .p-BillingDetails,
+    #payment-element .p-BillingDetailsForm,
+    #payment-element [data-testid="billingDetails"],
+    #payment-element .BillingDetails,
+    #payment-element .OptionalField,
+    #payment-element .p-BillingDetailsCollectionContainer,
+    #payment-element .p-BillingDetailsSectionContainer,
+    #payment-element [data-elements-stable-field-name="billingDetails"],
+    #payment-element .p-Input--billingDetails,
+    #payment-element .p-BillingDetailsCollectionForm {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    /* Ensure payment method fields remain visible */
+    #payment-element .p-PaymentMethodMessagesContainer,
+    #payment-element .p-PaymentMethodSelector,
+    #payment-element .p-Input--paymentMethod,
+    #payment-element .p-CardNumberInput,
+    #payment-element .p-CardExpiryInput,
+    #payment-element .p-CardCvcInput {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    /* Payment Modal Scrolling */
+    #paymentModal {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    }
+    
+    #paymentModal::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    #paymentModal::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    #paymentModal::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+        border-radius: 3px;
+    }
+    
+    #paymentModal::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(156, 163, 175, 0.8);
+    }
+    
+    /* Ensure modal content doesn't get cut off */
+    #paymentModal .bg-white {
+        min-height: fit-content;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-height: calc(100vh - 2rem);
+    }
+    
+    /* Mobile responsiveness for payment modal */
+    @media (max-height: 600px) {
+        #paymentModal .bg-white {
+            max-height: calc(100vh - 1rem);
+            padding: 1rem;
+        }
+        
+        #paymentModal .text-center.mb-6 {
+            margin-bottom: 1rem;
+        }
+        
+        #paymentModal .text-3xl {
+            font-size: 1.5rem;
+        }
+        
+        #paymentModal .w-16.h-16 {
+            width: 3rem;
+            height: 3rem;
+        }
+    }
 </style>
 @endpush
 
@@ -405,14 +484,22 @@
                         Quick Actions
                     </h3>
                     <div class="space-y-3">
-                        @if($event->isApproved())
+                        @if($hasSuccessfulPayment)
+                            <div class="w-full bg-green-100 border-2 border-green-300 text-green-800 py-3 px-4 rounded-lg font-medium">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Payment Completed Successfully
+                            </div>
+                            <div class="text-xs text-green-600 text-center">
+                                <p><i class="fas fa-shield-alt mr-1"></i>Your payment of ৳{{ number_format($event->total_cost, 2) }} has been processed</p>
+                            </div>
+                        @elseif($event->isApproved())
                             <button onclick="openPaymentModal('full_event', {{ $event->total_cost }})" 
                                     class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
                                 <i class="fas fa-credit-card mr-2"></i>
                                 Pay Full Amount (৳{{ number_format($event->total_cost, 2) }})
                             </button>
                             <div class="text-xs text-gray-500 text-center">
-                                <p>Payment integration coming soon</p>
+                                <p><i class="fas fa-shield-alt mr-1"></i>Secure payment powered by Stripe</p>
                             </div>
                         @else
                             <div class="w-full bg-gray-300 text-gray-600 py-3 px-4 rounded-lg font-medium cursor-not-allowed">
@@ -500,14 +587,15 @@
     </div>
 
     <!-- ========== PAYMENT MODAL ========== -->
-    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-start justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-lg p-4 sm:p-6 w-full max-w-lg mx-auto my-4 sm:my-8 max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Payment</h3>
+                <h3 class="text-lg font-bold text-gray-800">Secure Payment</h3>
                 <button onclick="closePaymentModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                     <i class="fas fa-credit-card text-green-600 text-2xl"></i>
@@ -515,22 +603,54 @@
                 <h4 class="text-xl font-bold text-gray-800 mb-2">Payment for <span id="paymentModuleDisplay"></span></h4>
                 <p class="text-3xl font-bold text-green-600">৳<span id="paymentAmount"></span></p>
             </div>
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <div class="flex items-center">
-                    <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
-                    <p class="text-sm text-yellow-800">Payment system integration coming soon!</p>
+
+            <!-- Payment Form -->
+            <div class="max-h-96 overflow-y-auto pr-2">
+                <form id="payment-form" class="space-y-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                        <p class="text-sm text-blue-800">Secured by Stripe - Your payment information is encrypted and secure</p>
+                    </div>
                 </div>
-            </div>
-            <div class="flex space-x-2">
-                <button disabled
-                        class="flex-1 bg-gray-400 text-white py-2 px-4 rounded-lg font-medium cursor-not-allowed">
-                    <i class="fas fa-credit-card mr-2"></i>
-                    Pay Now (Coming Soon)
-                </button>
-                <button type="button" onclick="closePaymentModal()"
-                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition-colors duration-200">
-                    Close
-                </button>
+
+                <!-- Stripe Elements will be mounted here -->
+                <div id="payment-element" class="mb-4">
+                    <!-- Stripe Elements creates form fields here -->
+                </div>
+
+                <!-- Loading state -->
+                <div id="payment-loading" class="hidden text-center py-4">
+                    <div class="inline-flex items-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing payment...
+                    </div>
+                </div>
+
+                <!-- Error messages -->
+                <div id="payment-error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                        <p class="text-sm text-red-800" id="payment-error-message"></p>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex space-x-2 pt-4">
+                    <button type="submit" id="submit-payment" 
+                            class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <i class="fas fa-credit-card mr-2"></i>
+                        <span id="payment-button-text">Pay Now</span>
+                    </button>
+                    <button type="button" onclick="closePaymentModal()"
+                            class="px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition-colors duration-200">
+                        Cancel
+                    </button>
+                </div>
+            </form>
             </div>
         </div>
     </div>
@@ -564,16 +684,238 @@
             document.getElementById('messageText').value = '';
         };
 
+        // Stripe Configuration
+        const stripe = Stripe('{{ config("services.stripe.key") }}');
+        let elements;
+        let paymentElement;
+        let currentEventId = {{ $event->id }};
+        let currentAmount = 0;
+
         // Payment Modal Functions
-        window.openPaymentModal = function(module, amount) {
+        window.openPaymentModal = async function(module, amount) {
+            // Check if payment is already in progress
+            if (document.getElementById('submit-payment').disabled) {
+                return;
+            }
+            
+            // Debug authentication
+            console.log('User authenticated:', {{ auth()->check() ? 'true' : 'false' }});
+            console.log('Event ID:', currentEventId);
+            console.log('Current URL:', window.location.href);
+            
+            currentAmount = amount;
             document.getElementById('paymentModuleDisplay').textContent = moduleNames[module];
             document.getElementById('paymentAmount').textContent = new Intl.NumberFormat().format(amount);
             document.getElementById('paymentModal').classList.remove('hidden');
+            
+            // Initialize Stripe payment form
+            await initializePaymentForm(amount);
         };
 
         window.closePaymentModal = function() {
             document.getElementById('paymentModal').classList.add('hidden');
+            resetPaymentForm();
         };
+
+        // Initialize Stripe Payment Form
+        async function initializePaymentForm(amount) {
+            try {
+                showLoadingState(true);
+                
+                // Create payment intent
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfToken) {
+                    throw new Error('CSRF token not found. Please refresh the page.');
+                }
+                
+                console.log('Making request to:', `/payment/create-intent/${currentEventId}`);
+                console.log('CSRF token found:', csrfToken.content.substring(0, 10) + '...');
+                
+                const response = await fetch(`/payment/create-intent/${currentEventId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken.content,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ amount: amount })
+                });
+
+                console.log('Response status:', response.status);
+                
+                // Handle different response types
+                if (response.status === 419) {
+                    throw new Error('Session expired. Please refresh the page and try again.');
+                }
+                
+                // Check if response is actually JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const textResponse = await response.text();
+                    console.error('Expected JSON but got:', textResponse.substring(0, 200));
+                    
+                    if (response.status === 419) {
+                        throw new Error('Session expired. Please refresh the page and try again.');
+                    } else if (response.status === 403) {
+                        throw new Error('Access denied. Please log in and try again.');
+                    } else if (response.status === 404) {
+                        throw new Error('Payment service not found. Please contact support.');
+                    } else {
+                        throw new Error(`Server error (${response.status}). Please try again.`);
+                    }
+                }
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Payment initialization failed (${response.status})`);
+                }
+
+                // Create Stripe elements with minimal fields (no personal info)
+                elements = stripe.elements({ 
+                    clientSecret: data.client_secret,
+                    appearance: {
+                        theme: 'stripe'
+                    }
+                });
+                
+                paymentElement = elements.create('payment', {
+                    layout: {
+                        type: 'tabs',
+                        defaultCollapsed: false
+                    },
+                    wallets: {
+                        applePay: 'never',
+                        googlePay: 'never'
+                    }
+                });
+                paymentElement.mount('#payment-element');
+
+                // Hide billing details after mounting
+                setTimeout(() => {
+                    hideBillingDetails();
+                }, 500);
+
+                // Setup form submission
+                setupPaymentForm();
+                
+                showLoadingState(false);
+            } catch (error) {
+                console.error('Payment initialization error:', error);
+                showPaymentError(error.message);
+                showLoadingState(false);
+            }
+        }
+
+        // Setup Payment Form Submission
+        function setupPaymentForm() {
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                if (!stripe || !elements) {
+                    return;
+                }
+
+                setPaymentButtonState(true, 'Processing...');
+                hidePaymentError();
+
+                try {
+                    // Use the exact current URL origin to ensure consistency
+                    const returnUrl = `${window.location.protocol}//${window.location.host}/payment/confirm/${currentEventId}`;
+                    console.log('Using return URL:', returnUrl);
+                    
+                    const { error } = await stripe.confirmPayment({
+                        elements,
+                        confirmParams: {
+                            return_url: returnUrl,
+                        },
+                    });
+
+                    if (error) {
+                        if (error.type === "card_error" || error.type === "validation_error") {
+                            showPaymentError(error.message);
+                        } else {
+                            showPaymentError("An unexpected error occurred.");
+                        }
+                        setPaymentButtonState(false, 'Pay Now');
+                    }
+                } catch (error) {
+                    console.error('Payment confirmation error:', error);
+                    showPaymentError('Payment failed. Please try again.');
+                    setPaymentButtonState(false, 'Pay Now');
+                }
+            });
+        }
+
+        // Helper Functions
+        function showLoadingState(show) {
+            const loading = document.getElementById('payment-loading');
+            const paymentElement = document.getElementById('payment-element');
+            const submitButton = document.getElementById('submit-payment');
+            
+            if (show) {
+                loading.classList.remove('hidden');
+                paymentElement.style.display = 'none';
+                submitButton.disabled = true;
+            } else {
+                loading.classList.add('hidden');
+                paymentElement.style.display = 'block';
+                submitButton.disabled = false;
+            }
+        }
+
+        function showPaymentError(message) {
+            const errorDiv = document.getElementById('payment-error');
+            const errorMessage = document.getElementById('payment-error-message');
+            errorMessage.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hidePaymentError() {
+            document.getElementById('payment-error').classList.add('hidden');
+        }
+
+        function setPaymentButtonState(loading, text) {
+            const button = document.getElementById('submit-payment');
+            const buttonText = document.getElementById('payment-button-text');
+            button.disabled = loading;
+            buttonText.textContent = text;
+        }
+
+        function resetPaymentForm() {
+            if (paymentElement) {
+                paymentElement.unmount();
+                paymentElement = null;
+            }
+            elements = null;
+            hidePaymentError();
+            setPaymentButtonState(false, 'Pay Now');
+        }
+
+        function hideBillingDetails() {
+            // Additional JavaScript to hide billing fields that might appear
+            const billingSelectors = [
+                '[data-testid="billingDetails"]',
+                '.p-BillingDetails',
+                '.p-BillingDetailsForm',
+                '.BillingDetails',
+                '.p-BillingDetailsCollectionContainer',
+                '.p-BillingDetailsSectionContainer',
+                '[data-elements-stable-field-name="billingDetails"]'
+            ];
+            
+            billingSelectors.forEach(selector => {
+                const elements = document.querySelectorAll(`#payment-element ${selector}`);
+                elements.forEach(element => {
+                    element.style.display = 'none';
+                    element.style.visibility = 'hidden';
+                    element.style.height = '0px';
+                    element.style.overflow = 'hidden';
+                });
+            });
+        }
 
     // Close modals when clicking outside
     document.getElementById('messageModal').addEventListener('click', function(e) {

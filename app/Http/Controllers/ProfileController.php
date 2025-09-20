@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
 use App\Models\UserMessage;
+use App\Models\Payment;
 
 class ProfileController extends Controller
 {
@@ -42,13 +43,17 @@ class ProfileController extends Controller
      */
     public function showEvent($eventId)
     {
-        $event = Event::with(['venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions', 'user'])
+        $event = Event::with(['venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions', 'user', 'payments'])
                      ->findOrFail($eventId);
 
         // Get user messages for this user
         $userMessages = UserMessage::where('user_id', $event->user_id)->first();
 
-        return view('profile.event-details', compact('event', 'userMessages'));
+        // Check if payment has been completed for this event
+        // Check both payment_status field and actual successful payments
+        $hasSuccessfulPayment = $event->isPaid() || $event->payments()->where('status', 'succeeded')->exists();
+
+        return view('profile.event-details', compact('event', 'userMessages', 'hasSuccessfulPayment'));
     }
 
     /**
