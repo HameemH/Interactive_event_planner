@@ -159,6 +159,14 @@ class Event extends Model
     }
 
     /**
+     * Get the user messages for this event
+     */
+    public function userMessages()
+    {
+        return $this->hasMany(UserMessage::class);
+    }
+
+    /**
      * Check if event is paid
      */
     public function isPaid()

@@ -173,10 +173,10 @@
                         <p><strong>Size:</strong> {{ $event->venue->venue_size ?? 'N/A' }} sqm</p>
                         <p><strong>Address:</strong> {{ $event->venue->venue_address ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->venue->venue_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->venue_message)
+                        @if($userMessages && $userMessages->venue_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->venue_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->venue_message }}</p>
                             </div>
                         @endif
                     </div>
@@ -194,10 +194,10 @@
                         <p><strong>Chair Type:</strong> {{ $event->seating->chair_type ?? 'N/A' }}</p>
                         <p><strong>Table Type:</strong> {{ $event->seating->table_type ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->seating->seating_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->seating_message)
+                        @if($userMessages && $userMessages->seating_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->seating_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->seating_message }}</p>
                             </div>
                         @endif
                     </div>
@@ -214,10 +214,10 @@
                         <p><strong>Stage Type:</strong> {{ $event->stage->stage_type ?? 'N/A' }}</p>
                         <p><strong>Decoration:</strong> {{ $event->stage->surrounding_decoration ? 'Yes' : 'No' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->stage->stage_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->stage_message)
+                        @if($userMessages && $userMessages->stage_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->stage_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->stage_message }}</p>
                             </div>
                         @endif
                     </div>
@@ -235,10 +235,10 @@
                         <p><strong>Guests:</strong> {{ $event->catering->total_guests ?? 'N/A' }}</p>
                         <p><strong>Per Person:</strong> ৳{{ number_format($event->catering->per_person_cost ?? 0, 2) }}</p>
                         <p><strong>Total Cost:</strong> ৳{{ number_format($event->catering->total_catering_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->catering_message)
+                        @if($userMessages && $userMessages->catering_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->catering_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->catering_message }}</p>
                             </div>
                         @endif
                     </div>
@@ -256,10 +256,10 @@
                         <p><strong>Photographers:</strong> {{ $event->photography->num_photographers ?? 'N/A' }}</p>
                         <p><strong>Hours:</strong> {{ $event->photography->num_hours ?? 'N/A' }}</p>
                         <p><strong>Cost:</strong> ৳{{ number_format($event->photography->photography_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->photography_message)
+                        @if($userMessages && $userMessages->photography_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->photography_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->photography_message }}</p>
                             </div>
                         @endif
                     </div>
@@ -288,10 +288,10 @@
                             <p>No extra options selected</p>
                         @endif
                         <p><strong>Cost:</strong> ৳{{ number_format($event->extraOptions->extra_options_cost ?? 0, 2) }}</p>
-                        @if($event->user->userMessages && $event->user->userMessages->extra_options_message)
+                        @if($userMessages && $userMessages->extra_options_message)
                             <div class="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
                                 <p class="text-xs text-gray-600 font-semibold">User Message:</p>
-                                <p class="text-sm text-gray-800">{{ $event->user->userMessages->extra_options_message }}</p>
+                                <p class="text-sm text-gray-800">{{ $userMessages->extra_options_message }}</p>
                             </div>
                         @endif
                     </div>

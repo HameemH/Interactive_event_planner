@@ -46,8 +46,8 @@ class ProfileController extends Controller
         $event = Event::with(['venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions', 'user', 'payments'])
                      ->findOrFail($eventId);
 
-        // Get user messages for this user
-        $userMessages = UserMessage::where('user_id', $event->user_id)->first();
+        // Get user messages for this specific event
+        $userMessages = UserMessage::where('event_id', $event->id)->first();
 
         // Check if payment has been completed for this event
         // Check both payment_status field and actual successful payments
@@ -89,8 +89,10 @@ class ProfileController extends Controller
             return back()->with('error', 'Unauthorized access');
         }
 
-        // Find or create user message record
-        $userMessage = UserMessage::firstOrCreate(['user_id' => auth()->id()]);
+        // Find or create user message record for this specific event
+        $userMessage = UserMessage::firstOrCreate([
+            'event_id' => $eventId
+        ]);
         
         // Update the specific module message
         $moduleField = $request->module . '_message';

@@ -12,7 +12,7 @@ class UserMessage extends Model
     protected $table = 'user_messages';
 
     protected $fillable = [
-        'user_id',
+        'event_id',
         'venue_message',
         'seating_message',
         'stage_message',
@@ -22,11 +22,11 @@ class UserMessage extends Model
     ];
 
     /**
-     * Get the user that owns the message
+     * Get the event that this message belongs to
      */
-    public function user()
+    public function event()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Event::class);
     }
 
     /**

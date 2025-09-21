@@ -118,8 +118,12 @@ class AdminController extends Controller
             return redirect()->route('access.denied')->with('error', 'Access denied.');
         }
 
-        $event->load(['user.userMessages', 'venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions']);
-        return view('admin.event-details', compact('event'));
+        $event->load(['user', 'venue', 'seating', 'stage', 'catering', 'photography', 'extraOptions', 'userMessages']);
+        
+        // Get the user messages for this specific event
+        $userMessages = $event->userMessages->first();
+        
+        return view('admin.event-details', compact('event', 'userMessages'));
     }
 
     /**
