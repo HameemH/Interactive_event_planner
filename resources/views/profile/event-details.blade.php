@@ -485,7 +485,7 @@
                     </h3>
                     <div class="space-y-3">
                         @if($hasSuccessfulPayment)
-                            <div class="w-full bg-green-100 border-2 border-green-300 text-green-800 py-3 px-4 rounded-lg font-medium">
+                            <div class="alert-message w-full bg-green-100 border-2 border-green-300 text-green-800 py-3 px-4 rounded-lg font-medium">
                                 <i class="fas fa-check-circle mr-2"></i>
                                 Payment Completed Successfully
                             </div>
@@ -534,14 +534,14 @@
     </div>
 
     @if(session('success'))
-        <div class="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50">
+        <div class="alert-message fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50">
             <i class="fas fa-check-circle mr-2"></i>
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
+        <div class="alert-message fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
             <i class="fas fa-exclamation-circle mr-2"></i>
             {{ session('error') }}
         </div>
@@ -930,13 +930,17 @@
         }
     });
 
-        // Auto-hide success/error messages after 5 seconds
+        // Auto-hide success/error messages after 3 seconds
         setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert-dismissible');
+            const alerts = document.querySelectorAll('.alert-message');
             alerts.forEach(alert => {
-                alert.style.display = 'none';
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 500);
             });
-        }, 5000);
+        }, 3000);
     }); // Close DOMContentLoaded
 </script>
 @endpush

@@ -378,6 +378,19 @@ function showSuccessPopup(title, message) {
   `;
   popup.className = 'popup-bg';
   document.body.appendChild(popup);
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    if (document.body.contains(popup)) {
+      popup.style.transition = 'opacity 0.5s ease-out';
+      popup.style.opacity = '0';
+      setTimeout(() => {
+        if (document.body.contains(popup)) {
+          document.body.removeChild(popup);
+        }
+      }, 500);
+    }
+  }, 3000);
 }
 
 function showRequestApprovalForm() {

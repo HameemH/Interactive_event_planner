@@ -12,13 +12,15 @@
         </div>
         
         @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <div class="alert-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <i class="fas fa-check-circle mr-2"></i>
                 {{ session('success') }}
             </div>
         @endif
 
         @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div class="alert-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <i class="fas fa-exclamation-circle mr-2"></i>
                 {{ session('error') }}
             </div>
         @endif
@@ -136,5 +138,19 @@ function searchEvents(query) {
         }
     });
 }
+
+// Auto-hide success/error messages after 3 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert-message');
+        alerts.forEach(alert => {
+            alert.style.transition = 'opacity 0.5s ease-out';
+            alert.style.opacity = '0';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 500);
+        });
+    }, 3000);
+});
 </script>
 @endsection
